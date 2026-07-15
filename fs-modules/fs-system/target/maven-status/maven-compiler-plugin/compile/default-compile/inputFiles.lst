@@ -1,0 +1,7 @@
+D:\Git\NovaFS\fs-modules\fs-system\src\main\java\io\novafs\system\auth\AuthController.java
+D:\Git\NovaFS\fs-modules\fs-system\src\main\java\io\novafs\system\auth\dto\LoginRequest.java
+D:\Git\NovaFS\fs-modules\fs-system\src\main\java\io\novafs\system\auth\dto\LoginResponse.java
+D:\Git\NovaFS\fs-modules\fs-system\src\main\java\io\novafs\system\auth\dto\RegisterRequest.java
+D:\Git\NovaFS\fs-modules\fs-system\src\main\java\io\novafs\system\user\entity\SysUser.java
+D:\Git\NovaFS\fs-modules\fs-system\src\main\java\io\novafs\system\user\mapper\SysUserMapper.java
+D:\Git\NovaFS\fs-modules\fs-system\src\main\java\io\novafs\system\user\service\SysUserService.java

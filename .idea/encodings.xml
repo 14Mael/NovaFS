@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/fs-admin/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/fs-admin/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/fs-dependencies/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/fs-dependencies/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/fs-framework/fs-common-core/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/fs-framework/fs-common-core/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/fs-framework/fs-orm/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/fs-framework/fs-orm/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/fs-framework/fs-redis/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/fs-framework/fs-redis/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/fs-framework/fs-security/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/fs-framework/fs-security/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/fs-framework/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/fs-framework/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/fs-modules/fs-system/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/fs-modules/fs-system/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/fs-modules/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/fs-modules/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/src/main/resources" charset="UTF-8" />
+  </component>
+</project>

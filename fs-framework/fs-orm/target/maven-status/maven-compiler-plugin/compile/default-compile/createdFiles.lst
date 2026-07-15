@@ -1,0 +1,3 @@
+io\novafs\framework\orm\base\BaseEntity.class
+io\novafs\framework\orm\config\MyBatisFlexAutoConfig.class
+io\novafs\framework\orm\handler\JsonStringTypeHandler.class

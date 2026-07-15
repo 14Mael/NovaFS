@@ -1,0 +1,9 @@
+io\novafs\framework\common\util\JsonUtils.class
+io\novafs\framework\common\util\SpringUtils.class
+io\novafs\framework\common\exception\ErrorCode.class
+io\novafs\framework\common\model\PageQuery.class
+io\novafs\framework\common\model\PageResult.class
+io\novafs\framework\common\model\Result.class
+io\novafs\framework\common\exception\GlobalExceptionHandler.class
+io\novafs\framework\common\constant\CommonConstant.class
+io\novafs\framework\common\exception\BaseException.class

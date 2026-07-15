@@ -1,0 +1,7 @@
+io\novafs\system\user\mapper\SysUserMapper.class
+io\novafs\system\auth\AuthController.class
+io\novafs\system\user\service\SysUserService.class
+io\novafs\system\auth\dto\RegisterRequest.class
+io\novafs\system\auth\dto\LoginRequest.class
+io\novafs\system\user\entity\SysUser.class
+io\novafs\system\auth\dto\LoginResponse.class
