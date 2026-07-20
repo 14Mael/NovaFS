@@ -1,102 +1,81 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0"
-         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
-         https://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <modelVersion>4.0.0</modelVersion>
-
-    <parent>
-        <groupId>io.novafs</groupId>
-        <artifactId>nova-fs</artifactId>
-        <version>${revision}</version>
-    </parent>
-
-    <artifactId>fs-dependencies</artifactId>
-    <packaging>pom</packaging>
-    <name>NovaFS :: Dependencies</name>
-    <description>缁熶竴渚濊禆鐗堟湰绠＄悊 BOM</description>
-
-    <properties>
-        <mybatis-flex.version>1.11.6</mybatis-flex.version>
-        <sa-token.version>1.45.0</sa-token.version>
-        <mapstruct-plus.version>1.5.0</mapstruct-plus.version>
-        <hutool.version>5.8.28</hutool.version>
-        <springdoc.version>3.0.2</springdoc.version>
-        <caffeine.version>3.2.3</caffeine.version>
-        <mysql-connector.version>9.0.0</mysql-connector.version>
-        <guava.version>33.4.6-jre</guava.version>
-        <jackson-bom.version>2.18.0</jackson-bom.version>
-    </properties>
-
-    <dependencyManagement>
-        <dependencies>
-            <!-- MyBatis-Flex -->
-            <dependency>
-                <groupId>com.mybatis-flex</groupId>
-                <artifactId>mybatis-flex-spring-boot4-starter</artifactId>
-                <version>${mybatis-flex.version}</version>
-            </dependency>
-
-            <!-- Sa-Token 璁よ瘉鎺堟潈 -->
-            <dependency>
-                <groupId>cn.dev33</groupId>
-                <artifactId>sa-token-spring-boot4-starter</artifactId>
-                <version>${sa-token.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>cn.dev33</groupId>
-                <artifactId>sa-token-jwt</artifactId>
-                <version>${sa-token.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>cn.dev33</groupId>
-                <artifactId>sa-token-redis-jackson</artifactId>
-                <version>${sa-token.version}</version>
-            </dependency>
-
-            <!-- MapStruct Plus -->
-            <dependency>
-                <groupId>io.github.linpeilie</groupId>
-                <artifactId>mapstruct-plus-spring-boot-starter</artifactId>
-                <version>${mapstruct-plus.version}</version>
-            </dependency>
-
-            <!-- Hutool 宸ュ叿搴?-->
-            <dependency>
-                <groupId>cn.hutool</groupId>
-                <artifactId>hutool-all</artifactId>
-                <version>${hutool.version}</version>
-            </dependency>
-
-            <!-- SpringDoc OpenAPI -->
-            <dependency>
-                <groupId>org.springdoc</groupId>
-                <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-                <version>${springdoc.version}</version>
-            </dependency>
-
-            <!-- Caffeine 鏈湴缂撳瓨 -->
-            <dependency>
-                <groupId>com.github.ben-manes.caffeine</groupId>
-                <artifactId>caffeine</artifactId>
-                <version>${caffeine.version}</version>
-            </dependency>
-
-            <!-- Guava -->
-            <dependency>
-                <groupId>com.google.guava</groupId>
-                <artifactId>guava</artifactId>
-                <version>${guava.version}</version>
-            </dependency>
-
-            <!-- MySQL 椹卞姩 -->
-            <dependency>
-                <groupId>com.mysql</groupId>
-                <artifactId>mysql-connector-j</artifactId>
-                <version>${mysql-connector.version}</version>
-                <scope>runtime</scope>
-            </dependency>
-        </dependencies>
-    </dependencyManagement>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0          https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>io.novafs</groupId>
+    <artifactId>nova-fs</artifactId>
+    <version>${revision}</version>
+  </parent>
+  <artifactId>fs-dependencies</artifactId>
+  <packaging>pom</packaging>
+  <name>NovaFS :: Dependencies</name>
+  <description>缁熶竴渚濊禆鐗堟湰绠＄悊 BOM</description>
+  <properties>
+    <mybatis-flex.version>1.11.6</mybatis-flex.version>
+    <sa-token.version>1.45.0</sa-token.version>
+    <mapstruct-plus.version>1.5.0</mapstruct-plus.version>
+    <hutool.version>5.8.28</hutool.version>
+    <caffeine.version>3.2.3</caffeine.version>
+    <mysql-connector.version>9.0.0</mysql-connector.version>
+    <guava.version>33.4.6-jre</guava.version>
+    <jackson-bom.version>2.18.0</jackson-bom.version>
+  </properties>
+  <dependencyManagement>
+    <dependencies>
+      <!-- MyBatis-Flex -->
+      <dependency>
+        <groupId>com.mybatis-flex</groupId>
+        <artifactId>mybatis-flex-spring-boot3-starter</artifactId>
+        <version>${mybatis-flex.version}</version>
+      </dependency>
+      <!-- Sa-Token 璁よ瘉鎺堟潈 -->
+      <dependency>
+        <groupId>cn.dev33</groupId>
+        <artifactId>sa-token-spring-boot3-starter</artifactId>
+        <version>${sa-token.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>cn.dev33</groupId>
+        <artifactId>sa-token-jwt</artifactId>
+        <version>${sa-token.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>cn.dev33</groupId>
+        <artifactId>sa-token-redis-jackson</artifactId>
+        <version>${sa-token.version}</version>
+      </dependency>
+      <!-- MapStruct Plus -->
+      <dependency>
+        <groupId>io.github.linpeilie</groupId>
+        <artifactId>mapstruct-plus-spring-boot-starter</artifactId>
+        <version>${mapstruct-plus.version}</version>
+      </dependency>
+      <!-- Hutool 宸ュ叿搴?-->
+      <dependency>
+        <groupId>cn.hutool</groupId>
+        <artifactId>hutool-all</artifactId>
+        <version>${hutool.version}</version>
+      </dependency>
+      <!-- SpringDoc OpenAPI -->
+      <!-- Caffeine 鏈湴缂撳瓨 -->
+      <dependency>
+        <groupId>com.github.ben-manes.caffeine</groupId>
+        <artifactId>caffeine</artifactId>
+        <version>${caffeine.version}</version>
+      </dependency>
+      <!-- Guava -->
+      <dependency>
+        <groupId>com.google.guava</groupId>
+        <artifactId>guava</artifactId>
+        <version>${guava.version}</version>
+      </dependency>
+      <!-- MySQL 椹卞姩 -->
+      <dependency>
+        <groupId>com.mysql</groupId>
+        <artifactId>mysql-connector-j</artifactId>
+        <version>${mysql-connector.version}</version>
+        <scope>runtime</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
 </project>
-

@@ -4,18 +4,18 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
-import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.serializer.Jackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
 import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 /**
  * Redis 自动配置
  */
-@AutoConfiguration
+@Configuration
 public class RedisConfig {
 
     @Bean
@@ -34,8 +34,7 @@ public class RedisConfig {
                 JsonTypeInfo.As.PROPERTY
         );
 
-        Jackson2JsonRedisSerializer<Object> serializer =
-                new Jackson2JsonRedisSerializer<>(objectMapper, Object.class);
+        var serializer = new GenericJackson2JsonRedisSerializer(objectMapper);
 
         template.setKeySerializer(StringRedisSerializer.UTF_8);
         template.setValueSerializer(serializer);

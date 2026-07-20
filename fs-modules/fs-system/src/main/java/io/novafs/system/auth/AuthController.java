@@ -3,10 +3,9 @@ package io.novafs.system.auth;
 import cn.dev33.satoken.stp.SaLoginModel;
 import cn.dev33.satoken.stp.StpUtil;
 import io.novafs.framework.common.model.Result;
-import io.novafs.system.auth.dto.LoginRequest;
 import io.novafs.system.auth.dto.LoginResponse;
-import io.novafs.system.auth.dto.RegisterRequest;
-import io.novafs.system.user.entity.SysUser;
+import io.novafs.system.user.dto.LoginRequest;
+import io.novafs.system.user.dto.RegisterRequest;
 import io.novafs.system.user.service.SysUserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -25,47 +24,27 @@ public class AuthController {
 
     private final SysUserService sysUserService;
 
-    /**
-     * 注册
-     */
     @PostMapping("/register")
     public Result<Void> register(@Valid @RequestBody RegisterRequest request) {
-        SysUser user = sysUserService.register(
-                request.getUsername(),
-                request.getPassword(),
-                request.getEmail()
-        );
-        // 注册后自动登录
-        StpUtil.login(user.getId(), SaLoginModel.create()
+        sysUserService.register(request);
+        StpUtil.login(request.getUsername(), SaLoginModel.create()
                 .setIsWriteHeader(true)
         );
         return Result.ok();
     }
 
-    /**
-     * 登录
-     */
     @PostMapping("/login")
     public Result<LoginResponse> login(@Valid @RequestBody LoginRequest request) {
-        SysUser user = sysUserService.loginByPassword(
-                request.getUsername(),
-                request.getPassword()
-        );
-        // 登录，Token 写入响应头
-        StpUtil.login(user.getId(), SaLoginModel.create()
+        var loginResult = sysUserService.loginByPassword(request);
+        StpUtil.login(loginResult.getUser().getUsername(), SaLoginModel.create()
                 .setIsWriteHeader(true)
         );
         return Result.ok(new LoginResponse(
                 StpUtil.getTokenValue(),
-                user.getId(),
-                user.getUsername(),
-                user.getNickname()
+                loginResult.getUser()
         ));
     }
 
-    /**
-     * 登出
-     */
     @PostMapping("/logout")
     public Result<Void> logout() {
         StpUtil.logout();
