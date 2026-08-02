@@ -18,6 +18,7 @@
 
     <modules>
         <module>fs-system</module>
+        <module>fs-file</module>
         <module>fs-rag</module>
     </modules>
 </project>

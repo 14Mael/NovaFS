@@ -7,17 +7,31 @@
 
     <parent>
         <groupId>io.novafs</groupId>
-        <artifactId>nova-fs</artifactId>
+        <artifactId>fs-modules</artifactId>
         <version>${revision}</version>
     </parent>
 
-    <artifactId>fs-admin</artifactId>
+    <artifactId>fs-file</artifactId>
     <packaging>jar</packaging>
-    <name>NovaFS :: Admin</name>
-    <description>Spring Boot 启动入口</description>
+    <name>NovaFS :: Modules :: File</name>
+    <description>文件核心业务模块：上传/下载/分片/回收站/分享/预览</description>
 
     <dependencies>
-        <!-- 内部模块 -->
+        <dependency>
+            <groupId>io.novafs</groupId>
+            <artifactId>fs-common-core</artifactId>
+            <version>${revision}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.novafs</groupId>
+            <artifactId>fs-orm</artifactId>
+            <version>${revision}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.novafs</groupId>
+            <artifactId>fs-security</artifactId>
+            <version>${revision}</version>
+        </dependency>
         <dependency>
             <groupId>io.novafs</groupId>
             <artifactId>fs-system</artifactId>
@@ -25,23 +39,22 @@
         </dependency>
         <dependency>
             <groupId>io.novafs</groupId>
-            <artifactId>fs-file</artifactId>
+            <artifactId>storage-plugin-core</artifactId>
             <version>${revision}</version>
         </dependency>
         <dependency>
             <groupId>io.novafs</groupId>
-            <artifactId>fs-rag</artifactId>
+            <artifactId>storage-plugin-boot</artifactId>
             <version>${revision}</version>
         </dependency>
 
-        <!-- Spring Boot -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-actuator</artifactId>
+            <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
 
         <!-- 测试 -->
@@ -51,21 +64,4 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <excludes>
-                        <exclude>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok</artifactId>
-                        </exclude>
-                    </excludes>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
 </project>
