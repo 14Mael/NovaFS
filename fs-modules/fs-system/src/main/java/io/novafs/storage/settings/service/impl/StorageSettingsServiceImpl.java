@@ -35,7 +35,8 @@ public class StorageSettingsServiceImpl implements StorageSettingsService {
         StorageSettingsResponse vo = new StorageSettingsResponse();
         vo.setId(settings.getId());
         vo.setPlatformIdentifier(settings.getPlatformIdentifier());
-        vo.setConfigData(settings.getConfigData());
+        // 敏感凭证（AK/SK 等）不下发浏览器，前端仅需 id + platformIdentifier
+        vo.setConfigData(null);
         vo.setEnabled(settings.getEnabled());
         vo.setWorkspaceId(settings.getWorkspaceId());
         vo.setRemark(settings.getRemark());

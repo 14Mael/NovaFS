@@ -83,6 +83,7 @@ class FileShareServiceImplTest {
     @Test
     void shouldAccessWithCorrectPassword() {
         when(shareMapper.selectOneByQuery(any())).thenReturn(shareWithPassword());
+        when(shareMapper.incrementViewCount(1L)).thenReturn(1);
         when(fileInfoMapper.selectOneById(100L)).thenReturn(ownedFile());
 
         FileShareVO vo = service.access("ABCDEF", "1234");
@@ -124,6 +125,7 @@ class FileShareServiceImplTest {
                 new StorageConfigResolver.StorageTarget("local", new io.novafs.storage.plugin.core.model.StorageConfig()));
         when(storageFacade.downloadFile(any(), any(), any()))
                 .thenReturn(new ByteArrayInputStream(new byte[]{1, 2, 3}));
+        when(shareMapper.incrementDownloadCount(1L)).thenReturn(1);
 
         FileShareService.StreamDownload result = service.download("ABCDEF", "1234");
 
@@ -131,6 +133,25 @@ class FileShareServiceImplTest {
         assertThat(in).isNotNull();
         assertThat(result.share().getShareCode()).isEqualTo("ABCDEF");
         assertThat(share.getDownloadCount()).isEqualTo(1);
+    }
+
+    @Test
+    void shouldRejectDownloadWhenAtomicUpdateFails() {
+        FileShare share = shareWithPassword();
+        when(shareMapper.selectOneByQuery(any())).thenReturn(share);
+        FileInfo file = ownedFile();
+        file.setObjectKey("obj/key");
+        when(fileInfoMapper.selectOneById(100L)).thenReturn(file);
+        when(configResolver.resolve(any())).thenReturn(
+                new StorageConfigResolver.StorageTarget("local", new io.novafs.storage.plugin.core.model.StorageConfig()));
+        when(storageFacade.downloadFile(any(), any(), any()))
+                .thenReturn(new ByteArrayInputStream(new byte[]{1}));
+        when(shareMapper.incrementDownloadCount(1L)).thenReturn(0);
+
+        assertThatThrownBy(() -> service.download("ABCDEF", "1234"))
+                .isInstanceOf(BaseException.class)
+                .extracting(e -> ((BaseException) e).getCode())
+                .isEqualTo(ErrorCode.SHARE_DOWNLOAD_LIMIT_EXCEEDED.getCode());
     }
 
     @Test

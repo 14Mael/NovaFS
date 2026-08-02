@@ -56,9 +56,7 @@ public class ChunkUploadService {
         String computedMd5 = HexFormat.of().formatHex(digest.digest());
 
         recordChunk(task, chunkNumber, chunkSize, computedMd5);
-        task.setUploadedChunks(task.getUploadedChunks() + 1);
-        task.setUploadedSize(task.getUploadedSize() + chunkSize);
-        taskMapper.update(task);
+        taskMapper.incrementProgress(task.getId(), chunkSize);
 
         eventPublisher.publishEvent(new ChunkUploadProgressEvent(uploadId, chunkNumber));
         return new ChunkUploadResponse(chunkNumber, false);

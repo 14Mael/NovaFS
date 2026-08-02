@@ -79,8 +79,11 @@ public class FileShareServiceImpl implements FileShareService {
         }
         verifyPassword(share, password);
 
+        int rows = shareMapper.incrementViewCount(share.getId());
+        if (rows == 0) {
+            throw new BaseException(ErrorCode.SHARE_VIEW_LIMIT_EXCEEDED);
+        }
         share.setViewCount(share.getViewCount() + 1);
-        shareMapper.update(share);
 
         FileInfo file = fileInfoMapper.selectOneById(share.getFileId());
         if (file == null) {
@@ -107,11 +110,15 @@ public class FileShareServiceImpl implements FileShareService {
         if (file == null || file.getObjectKey() == null) {
             throw new BaseException(ErrorCode.FILE_NOT_FOUND);
         }
-        share.setDownloadCount(share.getDownloadCount() + 1);
-        shareMapper.update(share);
-
         StorageConfigResolver.StorageTarget target = configResolver.resolve(file.getStoragePlatformSettingId());
         InputStream in = storageFacade.downloadFile(target.platformType(), target.config(), file.getObjectKey());
+
+        // 先取流再原子扣减：存储不可用时不计下载次数；并发下由 SQL 保证不超过上限
+        int rows = shareMapper.incrementDownloadCount(share.getId());
+        if (rows == 0) {
+            throw new BaseException(ErrorCode.SHARE_DOWNLOAD_LIMIT_EXCEEDED);
+        }
+        share.setDownloadCount(share.getDownloadCount() + 1);
         return new StreamDownload(toVO(share, file), in);
     }
 

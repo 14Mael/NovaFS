@@ -36,6 +36,14 @@ public class ChunkInitService {
 
     @Transactional(rollbackFor = Exception.class)
     public ChunkInitResponse init(Long userId, Long workspaceId, ChunkInitRequest request) {
+        // 断点续传：同一文件（md5 + 文件名 + 工作空间 + 用户）的未完成任务直接复用 uploadId，
+        // 前端通过 chunk/list 查出已传分片，只补传缺失分片
+        FileTransferTask resumable = findResumableTask(userId, workspaceId, request);
+        if (resumable != null) {
+            return new ChunkInitResponse(resumable.getUploadId(), resumable.getTaskId(),
+                    resumable.getChunkSize(), resumable.getTotalChunks());
+        }
+
         StorageConfigResolver.StorageTarget target = configResolver.resolve(request.getStoragePlatformSettingId());
         long chunkSize = request.getChunkSize() == null ? DEFAULT_CHUNK_SIZE : request.getChunkSize();
 
@@ -49,6 +57,23 @@ public class ChunkInitService {
         taskMapper.update(task);
 
         return new ChunkInitResponse(uploadId, task.getTaskId(), chunkSize, request.getTotalChunks());
+    }
+
+    /**
+     * 查找可断点续传的未完成任务（md5 必须存在，避免误复用同名不同内容文件）
+     */
+    private FileTransferTask findResumableTask(Long userId, Long workspaceId, ChunkInitRequest request) {
+        if (request.getMd5() == null || request.getMd5().isBlank()) {
+            return null;
+        }
+        return taskMapper.selectOneByQuery(
+                QueryWrapper.create()
+                        .where(FileTransferTask::getWorkspaceId).eq(workspaceId)
+                        .and(FileTransferTask::getUserId).eq(userId)
+                        .and(FileTransferTask::getFileName).eq(request.getFileName())
+                        .and(FileTransferTask::getFileMd5).eq(request.getMd5())
+                        .and(FileTransferTask::getStatus).eq(TransferTaskStatus.UPLOADING)
+                        .orderBy(FileTransferTask::getId, false));
     }
 
     private FileTransferTask buildTask(Long userId, Long workspaceId, ChunkInitRequest request, long chunkSize) {

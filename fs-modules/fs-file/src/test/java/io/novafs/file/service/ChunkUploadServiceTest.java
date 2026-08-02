@@ -28,6 +28,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -67,7 +68,7 @@ class ChunkUploadServiceTest {
         assertThat(response.isAlreadyExists()).isFalse();
         assertThat(response.getChunkNumber()).isEqualTo(1);
         verify(chunkInfoMapper).insert(argThat(c -> c.getChunkNumber() == 1 && c.getUploadId().equals("u1")));
-        verify(taskMapper).update(argThat(t -> t.getUploadedChunks() == 1 && t.getUploadedSize() == 4L));
+        verify(taskMapper).incrementProgress(eq(1L), eq(4L));
         verify(eventPublisher).publishEvent(any(ChunkUploadProgressEvent.class));
     }
 
@@ -115,6 +116,7 @@ class ChunkUploadServiceTest {
 
     private static FileTransferTask buildTask() {
         FileTransferTask task = new FileTransferTask();
+        task.setId(1L);
         task.setTaskId("task-1");
         task.setUploadId("u1");
         task.setUserId(1L);
