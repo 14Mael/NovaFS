@@ -31,6 +31,7 @@ public class SaTokenConfig implements WebMvcConfigurer {
         registry.addInterceptor(new SaInterceptor())
                 .addPathPatterns("/api/**")
                 .excludePathPatterns("/api/health")
-                .excludePathPatterns("/api/auth/**");
+                .excludePathPatterns("/api/auth/**")
+                .excludePathPatterns("/api/share/**");
     }
 }
