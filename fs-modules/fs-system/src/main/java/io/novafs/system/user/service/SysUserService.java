@@ -10,11 +10,13 @@ import io.novafs.system.user.dto.UserResponse;
 import io.novafs.system.user.entity.SysUser;
 import io.novafs.system.user.enums.UserStatus;
 import io.novafs.system.user.mapper.SysUserMapper;
+import io.novafs.system.workspace.service.SysWorkspaceService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 
@@ -24,8 +26,10 @@ import java.time.LocalDateTime;
 public class SysUserService {
 
     private final SysUserMapper sysUserMapper;
+    private final SysWorkspaceService workspaceService;
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
+    @Transactional(rollbackFor = Exception.class)
     public UserResponse register(RegisterRequest request) {
         if (isUsernameExists(request.getUsername())) {
             throw new BaseException(ErrorCode.USER_EXISTS);
@@ -44,6 +48,9 @@ public class SysUserService {
 
         sysUserMapper.insert(user);
         log.info("User registered: username={}", request.getUsername());
+
+        // 新用户默认个人工作空间（创建者自动以 admin 身份加入）
+        workspaceService.createDefaultWorkspace(user.getId(), user.getUsername());
 
         return toUserResponse(user);
     }

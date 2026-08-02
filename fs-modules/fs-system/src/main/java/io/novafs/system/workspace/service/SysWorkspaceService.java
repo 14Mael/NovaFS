@@ -23,6 +23,11 @@ public interface SysWorkspaceService {
     WorkspaceResponse createWorkspace(Long userId, CreateWorkspaceRequest request);
 
     /**
+     * 为新注册用户创建默认个人工作空间（slug 基于用户名清洗，冲突时自动加后缀）
+     */
+    WorkspaceResponse createDefaultWorkspace(Long userId, String username);
+
+    /**
      * 获取工作空间详情
      */
     WorkspaceDetailResponse getDetail(Long workspaceId, Long userId);

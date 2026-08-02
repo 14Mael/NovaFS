@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Locale;
 
 /**
  * 工作空间服务实现
@@ -74,7 +75,6 @@ public class SysWorkspaceServiceImpl implements SysWorkspaceService {
         ) > 0) {
             throw new BaseException(ErrorCode.WORKSPACE_SLUG_EXISTS);
         }
-
         SysWorkspace workspace = new SysWorkspace();
         workspace.setName(request.getName());
         workspace.setSlug(request.getSlug());
@@ -87,6 +87,26 @@ public class SysWorkspaceServiceImpl implements SysWorkspaceService {
         log.info("Workspace created: name={}, slug={}, ownerId={}", request.getName(), request.getSlug(), userId);
 
         return toWorkspaceResponse(workspace);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public WorkspaceResponse createDefaultWorkspace(Long userId, String username) {
+        String base = username.toLowerCase(Locale.ROOT).replaceAll("[^a-z0-9-]", "");
+        if (base.isBlank()) {
+            base = "ws";
+        }
+        String slug = base;
+        int suffix = 1;
+        while (workspaceMapper.selectCountByQuery(
+                new QueryWrapper().eq(SysWorkspace::getSlug, slug)) > 0) {
+            slug = base + "-" + suffix++;
+        }
+
+        CreateWorkspaceRequest request = new CreateWorkspaceRequest();
+        request.setName(username + " 的空间");
+        request.setSlug(slug);
+        return createWorkspace(userId, request);
     }
 
     @Override
