@@ -9,8 +9,10 @@ import io.novafs.file.enums.FileShareScope;
 import io.novafs.file.mapper.FileInfoMapper;
 import io.novafs.file.mapper.FileShareMapper;
 import io.novafs.file.service.FileShareService;
+import io.novafs.file.storage.StorageConfigResolver;
 import io.novafs.framework.common.exception.BaseException;
 import io.novafs.framework.common.exception.ErrorCode;
+import io.novafs.storage.plugin.boot.StorageServiceFacade;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -18,7 +20,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.InputStream;
 import java.security.SecureRandom;
+import java.util.Arrays;
 import java.util.Objects;
 
 /**
@@ -34,6 +38,8 @@ public class FileShareServiceImpl implements FileShareService {
 
     private final FileShareMapper shareMapper;
     private final FileInfoMapper fileInfoMapper;
+    private final StorageConfigResolver configResolver;
+    private final StorageServiceFacade storageFacade;
     private final PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
     private final SecureRandom random = new SecureRandom();
 
@@ -64,11 +70,7 @@ public class FileShareServiceImpl implements FileShareService {
 
     @Override
     public FileShareVO access(String shareCode, String password) {
-        FileShare share = shareMapper.selectOneByQuery(
-                QueryWrapper.create().where(FileShare::getShareCode).eq(shareCode));
-        if (share == null) {
-            throw new BaseException(ErrorCode.SHARE_NOT_FOUND);
-        }
+        FileShare share = requireShare(shareCode);
         if (share.isExpired()) {
             throw new BaseException(ErrorCode.SHARE_EXPIRED);
         }
@@ -88,6 +90,32 @@ public class FileShareServiceImpl implements FileShareService {
     }
 
     @Override
+    public StreamDownload download(String shareCode, String password) {
+        FileShare share = requireShare(shareCode);
+        if (share.isExpired()) {
+            throw new BaseException(ErrorCode.SHARE_EXPIRED);
+        }
+        verifyPassword(share, password);
+        if (!hasScope(share.getScope(), FileShareScope.DOWNLOAD)) {
+            throw new BaseException(ErrorCode.FORBIDDEN, "该分享未开放下载权限");
+        }
+        if (share.getMaxDownloadCount() != null
+                && share.getDownloadCount() >= share.getMaxDownloadCount()) {
+            throw new BaseException(ErrorCode.SHARE_DOWNLOAD_LIMIT_EXCEEDED);
+        }
+        FileInfo file = fileInfoMapper.selectOneById(share.getFileId());
+        if (file == null || file.getObjectKey() == null) {
+            throw new BaseException(ErrorCode.FILE_NOT_FOUND);
+        }
+        share.setDownloadCount(share.getDownloadCount() + 1);
+        shareMapper.update(share);
+
+        StorageConfigResolver.StorageTarget target = configResolver.resolve(file.getStoragePlatformSettingId());
+        InputStream in = storageFacade.downloadFile(target.platformType(), target.config(), file.getObjectKey());
+        return new StreamDownload(toVO(share, file), in);
+    }
+
+    @Override
     @Transactional(rollbackFor = Exception.class)
     public void cancel(Long shareId, Long userId) {
         FileShare share = shareMapper.selectOneById(shareId);
@@ -102,6 +130,24 @@ public class FileShareServiceImpl implements FileShareService {
     }
 
     // ===== 私有方法 =====
+
+    private FileShare requireShare(String shareCode) {
+        FileShare share = shareMapper.selectOneByQuery(
+                QueryWrapper.create().where(FileShare::getShareCode).eq(shareCode));
+        if (share == null) {
+            throw new BaseException(ErrorCode.SHARE_NOT_FOUND);
+        }
+        return share;
+    }
+
+    private static boolean hasScope(String scope, String required) {
+        if (scope == null) {
+            return false;
+        }
+        return Arrays.stream(scope.split(","))
+                .map(String::trim)
+                .anyMatch(required::equalsIgnoreCase);
+    }
 
     private void verifyPassword(FileShare share, String password) {
         if (share.getSharePwd() == null) {

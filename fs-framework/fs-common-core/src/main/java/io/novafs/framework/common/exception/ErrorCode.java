@@ -52,6 +52,7 @@ public enum ErrorCode {
     SHARE_EXPIRED(5002, "分享已过期"),
     SHARE_PASSWORD_ERROR(5003, "提取码错误"),
     SHARE_VIEW_LIMIT_EXCEEDED(5004, "查看次数已达上限"),
+    SHARE_DOWNLOAD_LIMIT_EXCEEDED(5005, "下载次数已达上限"),
     RAG_EMBEDDING_FAILED(6001, "向量化失败"),
     RAG_CHAT_FAILED(6002, "对话生成失败"),
     RAG_DOCUMENT_NOT_FOUND(6003, "RAG文档不存在"),

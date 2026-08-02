@@ -6,8 +6,11 @@ import io.novafs.file.entity.FileInfo;
 import io.novafs.file.entity.FileShare;
 import io.novafs.file.mapper.FileInfoMapper;
 import io.novafs.file.mapper.FileShareMapper;
+import io.novafs.file.service.FileShareService;
+import io.novafs.file.storage.StorageConfigResolver;
 import io.novafs.framework.common.exception.BaseException;
 import io.novafs.framework.common.exception.ErrorCode;
+import io.novafs.storage.plugin.boot.StorageServiceFacade;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -16,6 +19,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.time.LocalDateTime;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -33,12 +38,16 @@ class FileShareServiceImplTest {
     private FileShareMapper shareMapper;
     @Mock
     private FileInfoMapper fileInfoMapper;
+    @Mock
+    private StorageConfigResolver configResolver;
+    @Mock
+    private StorageServiceFacade storageFacade;
 
     private FileShareServiceImpl service;
 
     @BeforeEach
     void setUp() {
-        service = new FileShareServiceImpl(shareMapper, fileInfoMapper);
+        service = new FileShareServiceImpl(shareMapper, fileInfoMapper, configResolver, storageFacade);
     }
 
     @Test
@@ -102,6 +111,51 @@ class FileShareServiceImplTest {
                 .isInstanceOf(BaseException.class)
                 .extracting(e -> ((BaseException) e).getCode())
                 .isEqualTo(ErrorCode.SHARE_EXPIRED.getCode());
+    }
+
+    @Test
+    void shouldDownloadPublicFile() {
+        FileShare share = shareWithPassword();
+        when(shareMapper.selectOneByQuery(any())).thenReturn(share);
+        FileInfo file = ownedFile();
+        file.setObjectKey("obj/key");
+        when(fileInfoMapper.selectOneById(100L)).thenReturn(file);
+        when(configResolver.resolve(any())).thenReturn(
+                new StorageConfigResolver.StorageTarget("local", new io.novafs.storage.plugin.core.model.StorageConfig()));
+        when(storageFacade.downloadFile(any(), any(), any()))
+                .thenReturn(new ByteArrayInputStream(new byte[]{1, 2, 3}));
+
+        FileShareService.StreamDownload result = service.download("ABCDEF", "1234");
+
+        InputStream in = result.in();
+        assertThat(in).isNotNull();
+        assertThat(result.share().getShareCode()).isEqualTo("ABCDEF");
+        assertThat(share.getDownloadCount()).isEqualTo(1);
+    }
+
+    @Test
+    void shouldRejectDownloadWithoutScope() {
+        FileShare share = shareWithPassword();
+        share.setScope("PREVIEW");
+        when(shareMapper.selectOneByQuery(any())).thenReturn(share);
+
+        assertThatThrownBy(() -> service.download("ABCDEF", "1234"))
+                .isInstanceOf(BaseException.class)
+                .extracting(e -> ((BaseException) e).getCode())
+                .isEqualTo(ErrorCode.FORBIDDEN.getCode());
+    }
+
+    @Test
+    void shouldRejectDownloadLimit() {
+        FileShare share = shareWithPassword();
+        share.setMaxDownloadCount(1);
+        share.setDownloadCount(1);
+        when(shareMapper.selectOneByQuery(any())).thenReturn(share);
+
+        assertThatThrownBy(() -> service.download("ABCDEF", "1234"))
+                .isInstanceOf(BaseException.class)
+                .extracting(e -> ((BaseException) e).getCode())
+                .isEqualTo(ErrorCode.SHARE_DOWNLOAD_LIMIT_EXCEEDED.getCode());
     }
 
     private static FileInfo ownedFile() {
