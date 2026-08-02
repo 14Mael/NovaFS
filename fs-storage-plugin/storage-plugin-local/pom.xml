@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+         https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>io.novafs</groupId>
+        <artifactId>fs-storage-plugin</artifactId>
+        <version>${revision}</version>
+    </parent>
+
+    <artifactId>storage-plugin-local</artifactId>
+    <packaging>jar</packaging>
+    <name>NovaFS :: Storage Plugin :: Local</name>
+    <description>本地文件系统存储插件实现</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>io.novafs</groupId>
+            <artifactId>storage-plugin-core</artifactId>
+            <version>${revision}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.novafs</groupId>
+            <artifactId>storage-plugin-boot</artifactId>
+            <version>${revision}</version>
+        </dependency>
+
+        <!-- 测试 -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+</project>
