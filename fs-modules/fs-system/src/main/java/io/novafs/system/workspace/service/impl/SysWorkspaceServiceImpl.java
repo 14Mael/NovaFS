@@ -8,14 +8,21 @@ import io.novafs.system.workspace.dto.UpdateWorkspaceRequest;
 import io.novafs.system.workspace.dto.WorkspaceDetailResponse;
 import io.novafs.system.workspace.dto.WorkspaceResponse;
 import io.novafs.system.workspace.entity.SysWorkspace;
+import io.novafs.system.workspace.invitation.entity.SysWorkspaceInvitation;
+import io.novafs.system.workspace.invitation.mapper.SysWorkspaceInvitationMapper;
 import io.novafs.system.workspace.mapper.SysWorkspaceMapper;
+import io.novafs.system.workspace.member.entity.SysWorkspaceMember;
+import io.novafs.system.workspace.member.mapper.SysWorkspaceMemberMapper;
+import io.novafs.system.workspace.role.entity.SysRole;
+import io.novafs.system.workspace.role.entity.SysRolePermission;
+import io.novafs.system.workspace.role.mapper.SysRoleMapper;
+import io.novafs.system.workspace.role.mapper.SysRolePermissionMapper;
 import io.novafs.system.workspace.service.SysWorkspaceService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -26,36 +33,59 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SysWorkspaceServiceImpl implements SysWorkspaceService {
 
+    /** 预设角色编码 */
+    private static final String ROLE_ADMIN = "admin";
+    private static final String ROLE_MEMBER = "member";
+    private static final String ROLE_VIEWER = "viewer";
+
+    /** 预设角色权限 */
+    private static final List<String> ADMIN_PERMISSIONS =
+            List.of("file:read", "file:write", "file:share", "storage:manage", "member:manage");
+    private static final List<String> MEMBER_PERMISSIONS =
+            List.of("file:read", "file:write", "file:share");
+    private static final List<String> VIEWER_PERMISSIONS =
+            List.of("file:read");
+
     private final SysWorkspaceMapper workspaceMapper;
+    private final SysWorkspaceMemberMapper memberMapper;
+    private final SysRoleMapper roleMapper;
+    private final SysRolePermissionMapper rolePermissionMapper;
+    private final SysWorkspaceInvitationMapper invitationMapper;
 
     @Override
     public List<WorkspaceResponse> getWorkspacesByUser(Long userId) {
-        // TODO: 待 SysWorkspaceMember 实体+Service就绪后，join查询用户加入的工作空间
-        return Collections.emptyList();
+        List<Long> workspaceIds = memberMapper.selectListByQuery(
+                        QueryWrapper.create().where(SysWorkspaceMember::getUserId).eq(userId))
+                .stream().map(SysWorkspaceMember::getWorkspaceId).toList();
+        if (workspaceIds.isEmpty()) {
+            return List.of();
+        }
+        return workspaceMapper.selectListByQuery(
+                        QueryWrapper.create().where(SysWorkspace::getId).in(workspaceIds)
+                                .orderBy(SysWorkspace::getCreatedAt, false))
+                .stream().map(SysWorkspaceServiceImpl::toWorkspaceResponse).toList();
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public WorkspaceResponse createWorkspace(Long userId, CreateWorkspaceRequest request) {
-        // 1. 校验 slug 唯一性
         if (workspaceMapper.selectCountByQuery(
                 new QueryWrapper().eq(SysWorkspace::getSlug, request.getSlug())
         ) > 0) {
             throw new BaseException(ErrorCode.WORKSPACE_SLUG_EXISTS);
         }
 
-        // 2. 创建实体
         SysWorkspace workspace = new SysWorkspace();
         workspace.setName(request.getName());
         workspace.setSlug(request.getSlug());
         workspace.setDescription(request.getDescription());
         workspace.setOwnerId(userId);
         workspace.setMemberCount(1);
-
         workspaceMapper.insert(workspace);
+
+        initPresetRolesAndOwner(workspace.getId(), userId);
         log.info("Workspace created: name={}, slug={}, ownerId={}", request.getName(), request.getSlug(), userId);
 
-        // TODO: 创建系统预设角色（admin/member/viewer）+ 创建者加入成员表
         return toWorkspaceResponse(workspace);
     }
 
@@ -65,13 +95,20 @@ public class SysWorkspaceServiceImpl implements SysWorkspaceService {
         if (workspace == null) {
             throw new BaseException(ErrorCode.WORKSPACE_NOT_FOUND);
         }
-        // TODO: 校验用户是否为工作空间成员
-        // TODO: 查询角色和权限信息
+        SysWorkspaceMember member = memberMapper.selectOneByQuery(
+                QueryWrapper.create().where(SysWorkspaceMember::getWorkspaceId).eq(workspaceId)
+                        .and(SysWorkspaceMember::getUserId).eq(userId));
+        if (member == null) {
+            throw new BaseException(ErrorCode.NOT_WORKSPACE_MEMBER);
+        }
 
         WorkspaceDetailResponse response = toDetailResponse(workspace);
-        response.setRoleCode(null);
-        response.setRoleName(null);
-        response.setPermissions(null);
+        SysRole role = roleMapper.selectOneById(member.getRoleId());
+        if (role != null) {
+            response.setRoleCode(role.getRoleCode());
+            response.setRoleName(role.getRoleName());
+        }
+        response.setPermissions(loadPermissions(member.getRoleId()));
         return response;
     }
 
@@ -105,7 +142,12 @@ public class SysWorkspaceServiceImpl implements SysWorkspaceService {
             throw new BaseException(ErrorCode.FORBIDDEN);
         }
 
-        // TODO: 级联删除邀请->成员->角色权限->角色
+        List<Integer> roleIds = findRoleIds(workspaceId);
+        invitationMapper.deleteByQuery(
+                QueryWrapper.create().where(SysWorkspaceInvitation::getWorkspaceId).eq(workspaceId));
+        memberMapper.deleteByQuery(
+                QueryWrapper.create().where(SysWorkspaceMember::getWorkspaceId).eq(workspaceId));
+        deleteRolesAndPermissions(roleIds);
         workspaceMapper.deleteById(workspaceId);
         log.info("Workspace deleted: id={}", workspaceId);
     }
@@ -117,7 +159,59 @@ public class SysWorkspaceServiceImpl implements SysWorkspaceService {
         ) == 0;
     }
 
-    // ========== 私有转换方法 ==========
+    // ========== 私有方法 ==========
+
+    /** 创建预设角色（admin/member/viewer）并将创建者以管理员身份加入成员表 */
+    private void initPresetRolesAndOwner(Long workspaceId, Long userId) {
+        int adminRoleId = insertRole(workspaceId, ROLE_ADMIN, "管理员", 0, ADMIN_PERMISSIONS);
+        insertRole(workspaceId, ROLE_MEMBER, "成员", 1, MEMBER_PERMISSIONS);
+        insertRole(workspaceId, ROLE_VIEWER, "访客", 1, VIEWER_PERMISSIONS);
+
+        SysWorkspaceMember owner = new SysWorkspaceMember();
+        owner.setWorkspaceId(workspaceId);
+        owner.setUserId(userId);
+        owner.setRoleId(adminRoleId);
+        memberMapper.insert(owner);
+    }
+
+    private int insertRole(Long workspaceId, String code, String name, int type, List<String> permissions) {
+        SysRole role = new SysRole();
+        role.setWorkspaceId(workspaceId);
+        role.setRoleCode(code);
+        role.setRoleName(name);
+        role.setRoleType(type);
+        roleMapper.insert(role);
+
+        for (String permission : permissions) {
+            SysRolePermission rp = new SysRolePermission();
+            rp.setRoleId(role.getId());
+            rp.setPermissionCode(permission);
+            rolePermissionMapper.insert(rp);
+        }
+        return role.getId();
+    }
+
+    private List<Integer> findRoleIds(Long workspaceId) {
+        return roleMapper.selectListByQuery(
+                        QueryWrapper.create().where(SysRole::getWorkspaceId).eq(workspaceId))
+                .stream().map(SysRole::getId).toList();
+    }
+
+    private void deleteRolesAndPermissions(List<Integer> roleIds) {
+        if (roleIds.isEmpty()) {
+            return;
+        }
+        rolePermissionMapper.deleteByQuery(
+                QueryWrapper.create().where(SysRolePermission::getRoleId).in(roleIds));
+        roleMapper.deleteByQuery(
+                QueryWrapper.create().where(SysRole::getId).in(roleIds));
+    }
+
+    private List<String> loadPermissions(Integer roleId) {
+        return rolePermissionMapper.selectListByQuery(
+                        QueryWrapper.create().where(SysRolePermission::getRoleId).eq(roleId))
+                .stream().map(SysRolePermission::getPermissionCode).toList();
+    }
 
     private static WorkspaceResponse toWorkspaceResponse(SysWorkspace workspace) {
         WorkspaceResponse response = new WorkspaceResponse();

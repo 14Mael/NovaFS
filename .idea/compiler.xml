@@ -13,10 +13,13 @@
         <module name="fs-rag" />
         <module name="fs-common-core" />
         <module name="fs-orm" />
+        <module name="storage-plugin-core" />
         <module name="fs-security" />
+        <module name="storage-plugin-boot" />
         <module name="fs-admin" />
-        <module name="fs-redis" />
+        <module name="storage-plugin-local" />
         <module name="fs-system" />
+        <module name="fs-redis" />
       </profile>
     </annotationProcessing>
   </component>

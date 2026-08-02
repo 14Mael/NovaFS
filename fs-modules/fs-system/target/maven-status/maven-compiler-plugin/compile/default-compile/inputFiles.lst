@@ -10,6 +10,7 @@ D:\Git\NovaFS\fs-modules\fs-system\src\main\java\io\novafs\storage\settings\enti
 D:\Git\NovaFS\fs-modules\fs-system\src\main\java\io\novafs\storage\settings\mapper\StorageSettingsMapper.java
 D:\Git\NovaFS\fs-modules\fs-system\src\main\java\io\novafs\system\auth\AuthController.java
 D:\Git\NovaFS\fs-modules\fs-system\src\main\java\io\novafs\system\auth\dto\LoginResponse.java
+D:\Git\NovaFS\fs-modules\fs-system\src\main\java\io\novafs\system\security\StpInterfaceImpl.java
 D:\Git\NovaFS\fs-modules\fs-system\src\main\java\io\novafs\system\user\dto\LoginRequest.java
 D:\Git\NovaFS\fs-modules\fs-system\src\main\java\io\novafs\system\user\dto\LoginResponse.java
 D:\Git\NovaFS\fs-modules\fs-system\src\main\java\io\novafs\system\user\dto\RegisterRequest.java
@@ -18,6 +19,7 @@ D:\Git\NovaFS\fs-modules\fs-system\src\main\java\io\novafs\system\user\entity\Sy
 D:\Git\NovaFS\fs-modules\fs-system\src\main\java\io\novafs\system\user\enums\UserStatus.java
 D:\Git\NovaFS\fs-modules\fs-system\src\main\java\io\novafs\system\user\mapper\SysUserMapper.java
 D:\Git\NovaFS\fs-modules\fs-system\src\main\java\io\novafs\system\user\service\SysUserService.java
+D:\Git\NovaFS\fs-modules\fs-system\src\main\java\io\novafs\system\workspace\controller\WorkspaceController.java
 D:\Git\NovaFS\fs-modules\fs-system\src\main\java\io\novafs\system\workspace\dto\CreateWorkspaceRequest.java
 D:\Git\NovaFS\fs-modules\fs-system\src\main\java\io\novafs\system\workspace\dto\UpdateWorkspaceRequest.java
 D:\Git\NovaFS\fs-modules\fs-system\src\main\java\io\novafs\system\workspace\dto\WorkspaceDetailResponse.java

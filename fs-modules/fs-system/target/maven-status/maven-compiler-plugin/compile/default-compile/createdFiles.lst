@@ -2,6 +2,7 @@ io\novafs\system\user\mapper\SysUserMapper.class
 io\novafs\system\workspace\role\mapper\SysRoleMapper.class
 io\novafs\storage\settings\dto\StorageSettingsResponse.class
 io\novafs\system\user\dto\RegisterRequest.class
+io\novafs\system\workspace\controller\WorkspaceController.class
 io\novafs\system\workspace\dto\UpdateWorkspaceRequest.class
 io\novafs\system\workspace\role\dto\CreateRoleRequest.class
 io\novafs\system\workspace\service\impl\SysWorkspaceServiceImpl.class
@@ -28,6 +29,7 @@ io\novafs\system\workspace\role\dto\RoleResponse.class
 io\novafs\storage\platform\mapper\StoragePlatformMapper.class
 io\novafs\system\workspace\invitation\mapper\SysWorkspaceInvitationMapper.class
 io\novafs\system\workspace\entity\SysWorkspace.class
+io\novafs\system\security\StpInterfaceImpl.class
 io\novafs\system\user\enums\UserStatus.class
 io\novafs\system\workspace\invitation\dto\InvitationResponse.class
 io\novafs\log\login\entity\SysLoginLog.class

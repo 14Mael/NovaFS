@@ -10,6 +10,7 @@
   <modules>
     <module>fs-dependencies</module>
     <module>fs-framework</module>
+    <module>fs-storage-plugin</module>
     <module>fs-modules</module>
     <module>fs-admin</module>
   </modules>

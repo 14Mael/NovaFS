@@ -22,6 +22,14 @@
     <file url="file://$PROJECT_DIR$/fs-modules/fs-system/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/fs-modules/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/fs-modules/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/fs-storage-plugin/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/fs-storage-plugin/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/fs-storage-plugin/storage-plugin-boot/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/fs-storage-plugin/storage-plugin-boot/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/fs-storage-plugin/storage-plugin-core/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/fs-storage-plugin/storage-plugin-core/src/main/resources" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/fs-storage-plugin/storage-plugin-local/src/main/java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/fs-storage-plugin/storage-plugin-local/src/main/resources" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/src/main/resources" charset="UTF-8" />
   </component>

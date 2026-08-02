@@ -9,7 +9,7 @@
   <artifactId>fs-dependencies</artifactId>
   <packaging>pom</packaging>
   <name>NovaFS :: Dependencies</name>
-  <description>缁熶竴渚濊禆鐗堟湰绠＄悊 BOM</description>
+  <description>统一依赖版本管理 BOM</description>
   <properties>
     <mybatis-flex.version>1.11.6</mybatis-flex.version>
     <sa-token.version>1.45.0</sa-token.version>
@@ -29,7 +29,7 @@
         <artifactId>mybatis-flex-spring-boot3-starter</artifactId>
         <version>${mybatis-flex.version}</version>
       </dependency>
-      <!-- Sa-Token 璁よ瘉鎺堟潈 -->
+      <!-- Sa-Token 认证授权 -->
       <dependency>
         <groupId>cn.dev33</groupId>
         <artifactId>sa-token-spring-boot3-starter</artifactId>
@@ -51,14 +51,14 @@
         <artifactId>mapstruct-plus-spring-boot-starter</artifactId>
         <version>${mapstruct-plus.version}</version>
       </dependency>
-      <!-- Hutool 宸ュ叿搴?-->
+      <!-- Hutool 工具库-->
       <dependency>
         <groupId>cn.hutool</groupId>
         <artifactId>hutool-all</artifactId>
         <version>${hutool.version}</version>
       </dependency>
       <!-- SpringDoc OpenAPI -->
-      <!-- Caffeine 鏈湴缂撳瓨 -->
+      <!-- Caffeine 本地缓存 -->
       <dependency>
         <groupId>com.github.ben-manes.caffeine</groupId>
         <artifactId>caffeine</artifactId>
@@ -70,7 +70,7 @@
         <artifactId>guava</artifactId>
         <version>${guava.version}</version>
       </dependency>
-      <!-- MySQL 椹卞姩 -->
+      <!-- MySQL 驱动 -->
       <dependency>
         <groupId>org.apache.tika</groupId>
         <artifactId>tika-core</artifactId>

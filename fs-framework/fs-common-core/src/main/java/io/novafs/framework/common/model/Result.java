@@ -7,7 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * 缁熶竴杩斿洖缁撴灉
+ * 统一返回结果
  */
 @Data
 @NoArgsConstructor
