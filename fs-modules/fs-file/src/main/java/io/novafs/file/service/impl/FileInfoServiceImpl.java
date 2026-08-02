@@ -18,6 +18,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.FilterInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.security.DigestInputStream;
 import java.security.MessageDigest;
@@ -46,7 +48,8 @@ public class FileInfoServiceImpl implements FileInfoService {
         String objectKey = UUID.randomUUID() + "/" + fileName;
 
         MessageDigest digest = newDigest();
-        DigestInputStream digestStream = new DigestInputStream(in, digest);
+        CountingInputStream counting = new CountingInputStream(in);
+        DigestInputStream digestStream = new DigestInputStream(counting, digest);
         FileUploadRequest pluginReq = new FileUploadRequest();
         pluginReq.setObjectKey(objectKey);
         pluginReq.setInputStream(digestStream);
@@ -54,9 +57,10 @@ public class FileInfoServiceImpl implements FileInfoService {
         storageFacade.uploadFile(target.platformType(), target.config(), pluginReq);
         String md5 = HexFormat.of().formatHex(digest.digest());
 
-        FileInfo file = buildFile(userId, workspaceId, parentId, fileName, objectKey, md5, storagePlatformSettingId);
+        FileInfo file = buildFile(userId, workspaceId, parentId, fileName, objectKey, md5,
+                counting.getCount(), storagePlatformSettingId);
         fileInfoMapper.insert(file);
-        log.info("File uploaded: id={}, name={}", file.getId(), fileName);
+        log.info("File uploaded: id={}, name={}, size={}", file.getId(), fileName, file.getSize());
         return toVO(file);
     }
 
@@ -145,14 +149,14 @@ public class FileInfoServiceImpl implements FileInfoService {
     }
 
     private static FileInfo buildFile(Long userId, Long workspaceId, Long parentId, String fileName,
-                                      String objectKey, String md5, Long settingId) {
+                                      String objectKey, String md5, long size, Long settingId) {
         FileInfo file = new FileInfo();
         file.setWorkspaceId(workspaceId);
         file.setUserId(userId);
         file.setParentId(parentId);
         file.setOriginalName(fileName);
         file.setSuffix(suffixOf(fileName));
-        file.setSize(0L);
+        file.setSize(size);
         file.setMimeType(contentTypeOf(fileName));
         file.setIsDir(false);
         file.setObjectKey(objectKey);
@@ -194,6 +198,42 @@ public class FileInfoServiceImpl implements FileInfoService {
             return MessageDigest.getInstance("MD5");
         } catch (NoSuchAlgorithmException e) {
             throw new IllegalStateException("MD5 算法不可用", e);
+        }
+    }
+
+    /**
+     * 统计已读取字节数的输入流包装器。
+     * <p>插件消费输入流的同时记录实际大小，避免上传后文件 size 恒为 0
+     * （导致列表/分享大小失真、秒传的 MD5+size 双校验永远无法命中）。</p>
+     */
+    private static final class CountingInputStream extends FilterInputStream {
+
+        private long count;
+
+        CountingInputStream(InputStream in) {
+            super(in);
+        }
+
+        @Override
+        public int read() throws IOException {
+            int b = super.read();
+            if (b >= 0) {
+                count++;
+            }
+            return b;
+        }
+
+        @Override
+        public int read(byte[] b, int off, int len) throws IOException {
+            int n = super.read(b, off, len);
+            if (n > 0) {
+                count += n;
+            }
+            return n;
+        }
+
+        long getCount() {
+            return count;
         }
     }
 
