@@ -37,6 +37,8 @@ const request = {
     instance.get(url, config) as unknown as Promise<T>,
   post: <T>(url: string, data?: unknown, config?: AxiosRequestConfig) =>
     instance.post(url, data, config) as unknown as Promise<T>,
+  put: <T>(url: string, data?: unknown, config?: AxiosRequestConfig) =>
+    instance.put(url, data, config) as unknown as Promise<T>,
   delete: <T>(url: string, config?: AxiosRequestConfig) =>
     instance.delete(url, config) as unknown as Promise<T>
 }

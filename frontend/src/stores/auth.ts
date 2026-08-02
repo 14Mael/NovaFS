@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { login as loginApi, register as registerApi, type UserInfo } from '../api/auth'
+import { login as loginApi, logout as logoutApi, register as registerApi, type UserInfo } from '../api/auth'
 
 // 安全读取 localStorage:脏数据(如字符串 "undefined"、损坏 JSON)一律按未登录处理并清理
 function loadToken(): string {
@@ -34,14 +34,19 @@ export const useAuthStore = defineStore('auth', {
     async login(username: string, password: string) {
       const data = await loginApi({ username, password })
       this.token = data.token
-      this.user = data.user
+      this.user = { username: data.username, nickname: data.nickname }
       localStorage.setItem('novafs_token', data.token)
-      localStorage.setItem('novafs_user', JSON.stringify(data.user))
+      localStorage.setItem('novafs_user', JSON.stringify(this.user))
     },
     async register(username: string, password: string, email: string) {
       await registerApi({ username, password, email })
     },
-    logout() {
+    async logout() {
+      try {
+        await logoutApi()
+      } catch {
+        /* 忽略登出接口异常,本地状态照常清理 */
+      }
       this.token = ''
       this.user = null
       localStorage.removeItem('novafs_token')

@@ -74,25 +74,25 @@ async function submit() {
   height: 100%;
   display: flex; align-items: center; justify-content: center;
   background:
-    radial-gradient(1200px 600px at 20% -10%, rgba(99,102,241,.25), transparent),
-    radial-gradient(1000px 500px at 90% 110%, rgba(168,85,247,.22), transparent),
-    var(--novafs-sidebar);
+    radial-gradient(1200px 600px at 20% -10%, rgba(59, 157, 255, 0.25), transparent),
+    radial-gradient(1000px 500px at 90% 110%, rgba(43, 108, 236, 0.2), transparent),
+    var(--novafs-bg);
 }
 .card {
   width: 380px; padding: 36px 34px 24px;
   background: #fff; border-radius: 16px;
-  box-shadow: 0 24px 60px rgba(16,20,38,.35);
+  box-shadow: 0 24px 60px rgba(23, 66, 130, 0.16);
 }
 .brand { text-align: center; margin-bottom: 22px; }
 .logo {
   width: 52px; height: 52px; margin: 0 auto 10px; border-radius: 14px;
-  background: linear-gradient(135deg, #6366f1, #a855f7);
+  background: var(--novafs-gradient);
   color: #fff; font-weight: 800; font-size: 28px;
   display: flex; align-items: center; justify-content: center;
 }
-.title { font-size: 24px; font-weight: 800; color: #1e2240; }
-.sub { font-size: 13px; color: #8a90b0; margin-top: 4px; }
+.title { font-size: 24px; font-weight: 800; color: var(--novafs-text); }
+.sub { font-size: 13px; color: var(--novafs-text-sub); margin-top: 4px; }
 .tabs { margin-bottom: 8px; }
 .submit { width: 100%; }
-.hint { text-align: center; font-size: 12px; color: #a0a4c0; margin-top: 12px; }
+.hint { text-align: center; font-size: 12px; color: var(--novafs-text-muted); margin-top: 12px; }
 </style>

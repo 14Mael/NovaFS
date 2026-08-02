@@ -9,16 +9,15 @@ export interface RegisterParams extends LoginParams {
   email: string
 }
 
-export interface UserInfo {
-  id: number
-  username: string
-  nickname?: string
-  email?: string
-}
-
 export interface LoginResult {
   token: string
-  user: UserInfo
+  username: string
+  nickname?: string
+}
+
+export interface UserInfo {
+  username: string
+  nickname?: string
 }
 
 export function login(data: LoginParams) {
@@ -27,4 +26,8 @@ export function login(data: LoginParams) {
 
 export function register(data: RegisterParams) {
   return request.post<null>('/auth/register', data)
+}
+
+export function logout() {
+  return request.post<null>('/auth/logout')
 }

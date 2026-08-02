@@ -104,8 +104,8 @@ function scrollToBottom() {
 <style scoped>
 .chat-page { height: 100%; display: flex; flex-direction: column; }
 .chat-header { padding: 20px 28px 14px; }
-.chat-header h2 { margin: 0 0 4px; font-size: 20px; color: #1e2240; }
-.chat-header .sub { font-size: 13px; color: #8a90b0; }
+.chat-header h2 { margin: 0 0 4px; font-size: 20px; color: var(--novafs-text); }
+.chat-header .sub { font-size: 13px; color: var(--novafs-text-sub); }
 
 .chat-body { flex: 1; overflow-y: auto; padding: 0 28px 16px; }
 
@@ -113,7 +113,8 @@ function scrollToBottom() {
 .chat-panel {
   background: #fff;
   border-radius: 16px;
-  box-shadow: 0 2px 12px rgba(30,34,64,.05);
+  border: 1px solid var(--novafs-card-border);
+  box-shadow: 0 2px 12px rgba(59, 157, 255, 0.06);
   padding: 24px 28px;
   min-height: 100%;
 }
@@ -121,12 +122,12 @@ function scrollToBottom() {
 .empty { text-align: center; padding: 60px 0 30px; }
 .empty-icon {
   width: 56px; height: 56px; margin: 0 auto 12px; border-radius: 16px;
-  background: linear-gradient(135deg, #6366f1, #a855f7);
+  background: var(--novafs-gradient);
   color: #fff; font-size: 26px; display: flex; align-items: center; justify-content: center;
-  box-shadow: 0 10px 24px rgba(99,102,241,.28);
+  box-shadow: 0 10px 24px rgba(59, 157, 255, 0.28);
 }
-.empty-title { font-size: 17px; font-weight: 700; color: #2a2f52; margin: 0; }
-.empty-sub { font-size: 13px; color: #9aa0bd; margin: 6px 0 18px; }
+.empty-title { font-size: 17px; font-weight: 700; color: var(--novafs-text); margin: 0; }
+.empty-sub { font-size: 13px; color: var(--novafs-text-muted); margin: 6px 0 18px; }
 .suggestions { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
 .suggest { cursor: pointer; }
 
@@ -134,28 +135,28 @@ function scrollToBottom() {
 .msg { margin-bottom: 18px; }
 .q {
   display: inline-block;
-  background: #6366f1;
+  background: var(--novafs-primary);
   color: #fff;
   border-radius: 10px;
   padding: 10px 16px;
   font-size: 14px;
   line-height: 1.6;
 }
-.a .answer { color: #2a2f52; font-size: 14px; line-height: 1.8; white-space: pre-wrap; margin-top: 6px; }
+.a .answer { color: var(--novafs-text); font-size: 14px; line-height: 1.8; white-space: pre-wrap; margin-top: 6px; }
 
 .sources { margin-top: 14px; }
-.sources-title { font-size: 12px; font-weight: 600; color: #8a90b0; margin-bottom: 8px; }
+.sources-title { font-size: 12px; font-weight: 600; color: var(--novafs-text-sub); margin-bottom: 8px; }
 .source-card {
-  background: #f7f8fc;
-  border: 1px solid #eceef5;
+  background: #f4f9ff;
+  border: 1px solid var(--novafs-card-border);
   border-radius: 10px;
   padding: 10px 14px;
   margin-bottom: 8px;
 }
 .source-head { display: flex; justify-content: space-between; font-size: 12px; }
-.doc-name { color: #6366f1; font-weight: 600; }
-.score { color: #f59e0b; font-weight: 700; }
-.source-content { font-size: 12px; color: #6b7290; margin-top: 4px; line-height: 1.6; }
+.doc-name { color: var(--novafs-primary); font-weight: 600; }
+.score { color: #e59a2b; font-weight: 700; }
+.source-content { font-size: 12px; color: #5a7aa6; margin-top: 4px; line-height: 1.6; }
 
 .chat-input { padding: 14px 28px 20px; }
 </style>
