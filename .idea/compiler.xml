@@ -9,14 +9,14 @@
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="false">
           <entry name="$PROJECT_DIR$/../../AT/Repository/org/projectlombok/lombok/1.18.42/lombok-1.18.42.jar" />
-          <entry name="$PROJECT_DIR$/../../AT/Repository/org/projectlombok/lombok/1.18.42/lombok-1.18.42.jar" />
         </processorPath>
-        <module name="fs-admin" />
+        <module name="fs-rag" />
         <module name="fs-common-core" />
         <module name="fs-orm" />
-        <module name="fs-system" />
-        <module name="fs-redis" />
         <module name="fs-security" />
+        <module name="fs-admin" />
+        <module name="fs-redis" />
+        <module name="fs-system" />
       </profile>
     </annotationProcessing>
   </component>

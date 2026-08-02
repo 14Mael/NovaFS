@@ -51,7 +51,12 @@ public enum ErrorCode {
     SHARE_NOT_FOUND(5001, "分享不存在"),
     SHARE_EXPIRED(5002, "分享已过期"),
     SHARE_PASSWORD_ERROR(5003, "提取码错误"),
-    SHARE_VIEW_LIMIT_EXCEEDED(5004, "查看次数已达上限");
+    SHARE_VIEW_LIMIT_EXCEEDED(5004, "查看次数已达上限"),
+    RAG_EMBEDDING_FAILED(6001, "向量化失败"),
+    RAG_CHAT_FAILED(6002, "对话生成失败"),
+    RAG_DOCUMENT_NOT_FOUND(6003, "RAG文档不存在"),
+    RAG_DOCUMENT_PARSE_FAILED(6004, "文档解析失败"),
+    RAG_QDRANT_UNAVAILABLE(6005, "向量库不可用");
 
     private final int code;
     private final String message;

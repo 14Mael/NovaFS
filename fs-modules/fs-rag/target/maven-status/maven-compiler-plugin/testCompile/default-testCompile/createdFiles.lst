@@ -1,0 +1,6 @@
+io\novafs\rag\service\RagSearchServiceImplTest.class
+io\novafs\rag\client\ChatClientTest.class
+io\novafs\rag\client\EmbeddingClientTest.class
+io\novafs\rag\service\RagDocumentServiceImplTest.class
+io\novafs\rag\service\RagChatServiceImplTest.class
+io\novafs\rag\splitter\TextSplitterTest.class

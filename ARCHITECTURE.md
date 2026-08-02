@@ -61,6 +61,8 @@
 └─────────────────────────────────────────────────────────────────────┘
 ```
 
+> 模块说明: 图中 fs-file / fs-storage / fs-log 等模块为规划目标;当前已落地 **fs-system**(用户/认证/工作空间)与 **fs-rag**(语义检索/文档问答,详见 docs/05-rag-design.md)。
+
 ## 二、关键数据流
 
 ### 2.1 文件上传流程
@@ -323,6 +325,16 @@ public class QuotaUpdateListener {
 └──────────────────┘
 ```
 
+**RAG 模块表**(_sql/rag.sql):
+
+| 表 | 说明 | 关键字段 |
+|---|---|---|
+| rag_document | RAG 文档元数据 | workspace_id(隔离维度)、user_id、name、content_type、status(0解析中/1已索引/2失败)、chunk_count |
+| rag_chunk | 文档切片 | document_id、chunk_index、content、token_count |
+
+> 向量本体存储在 Qdrant 集合 
+ovafs_docs,payload 含 workspaceId / documentId / chunkIndex / text,按 workspaceId 过滤实现数据隔离。
+
 ## 五、关键技术决策
 
 | 决策 | 选项 | 选择理由 |
@@ -334,6 +346,7 @@ public class QuotaUpdateListener {
 | 事件机制 | Spring Events | 无需引入消息队列，同进程内解耦足够用（后续可切到 MQ） |
 | 文件预览 | 策略模式 | 每种格式独立策略，新增格式只需加一个实现类 |
 | SSE | 基于 Redis Pub/Sub | 多实例部署时，一个实例的推送可广播到所有实例 |
+| RAG 检索 | Qdrant + OpenAI 兼容 API + 自研客户端 | 自研 RestClient 只依赖 embeddings/chat 两个端点,零框架绑定;Qdrant 按 workspaceId payload 隔离 |
 
 ## 六、安全设计
 

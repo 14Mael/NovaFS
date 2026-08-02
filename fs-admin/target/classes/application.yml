@@ -41,3 +41,30 @@ sa-token:
 logging:
   level:
     io.novafs: DEBUG
+
+# ================= RAG 配置 =================
+novafs:
+  rag:
+    enabled: true
+    embedding:
+      base-url: https://api.openai.com/v1
+      api-key: ${RAG_API_KEY:}
+      model: text-embedding-3-small
+      dimensions: 1536
+    chat:
+      base-url: https://api.openai.com/v1
+      api-key: ${RAG_API_KEY:}
+      model: gpt-4o-mini
+      temperature: 0.3
+      max-tokens: 1024
+    qdrant:
+      base-url: http://localhost:6333
+      api-key: ${QDRANT_API_KEY:}
+      collection: novafs_docs
+      vector-size: 1536
+    splitter:
+      chunk-size: 800
+      chunk-overlap: 100
+    search:
+      top-k: 5
+      min-score: 0.0

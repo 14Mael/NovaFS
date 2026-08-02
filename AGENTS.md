@@ -2,17 +2,17 @@
 
 ## 项目概述
 
-NovaFS（Nova File System）是一个企业级文件管理网盘系统，基于 **Spring Boot 4.x + Java 21 + MyBatis-Flex**，支持多云存储、文件预览、分片上传、团队协作等功能。
+NovaFS（Nova File System）是一个企业级文件管理网盘系统，基于 **Spring Boot 3.4.x + Java 21 + MyBatis-Flex**，支持多云存储、文件预览、分片上传、团队协作等功能。
 
 ## 技术栈
 
 | 类别 | 选型 |
 |---|---|
 | 语言 | Java 21 |
-| 框架 | Spring Boot 4.0.x |
+| 框架 | Spring Boot 3.4.x |
 | ORM | MyBatis-Flex 1.11.x |
 | 认证授权 | Sa-Token 1.45.x |
-| 数据库 | MySQL 8.x / PostgreSQL 16.x |
+| 数据库 | MySQL 8.x |
 | 缓存 | Redis + Caffeine（多级缓存） |
 | 构建工具 | Maven 多模块 |
 | 对象转换 | MapStruct Plus |
@@ -109,6 +109,7 @@ fs-file/
 4. **P3 — 文件核心业务**：上传/下载/列表/删除/回收站
 5. **P4 — 高级特性**：分片上传/断点续传/文件预览/分享
 6. **P5 — 体验优化**：SSE 实时推送/国际化/通知
+7. **P9 — RAG 检索增强**：文档解析、向量化、语义检索、文档问答(模块 fs-rag,详见 docs/05-rag-design.md)
 
 ## 测试要求
 - 核心 Service 必须有单元测试（JUnit 5 + Mockito）

@@ -6,7 +6,7 @@
 |---|---|---|
 | JDK | 21+ | 建议用 Eclipse Temurin 或 Oracle OpenJDK |
 | Maven | 3.9+ | 构建工具 |
-| MySQL | 8.0+ 或 PostgreSQL 16+ | 关系数据库 |
+| MySQL | 8.0+ | 关系数据库 |
 | Redis | 6.0+ | 缓存 + Sa-Token 会话 |
 | IDEA | 2024+ | 推荐 IntelliJ IDEA（安装 Lombok + MyBatisX 插件） |
 
@@ -43,7 +43,7 @@
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <skipTests>true</skipTests>
-        <spring-boot.version>4.0.3</spring-boot.version>
+        <spring-boot.version>3.4.4</spring-boot.version>
         <mybatis-flex.version>1.11.6</mybatis-flex.version>
         <sa-token.version>1.45.0</sa-token.version>
     </properties>

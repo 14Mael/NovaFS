@@ -2,6 +2,7 @@ package io.novafs.system.user.entity;
 
 import com.mybatisflex.annotation.Table;
 import io.novafs.framework.orm.base.BaseEntity;
+import io.novafs.system.user.enums.UserStatus;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -30,6 +31,6 @@ public class SysUser extends BaseEntity {
     private LocalDateTime lastLoginAt;
 
     public boolean isEnabled() {
-        return status == null || status == 0;
+        return status == null || status == UserStatus.NORMAL.getCode();
     }
 }

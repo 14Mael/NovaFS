@@ -212,6 +212,31 @@
 
 ---
 
+## P9：RAG 检索增强生成（预计 4-5 天）
+
+**目标**：文件语义检索与文档问答。
+
+### 任务清单
+
+| # | 任务 | 产出 |
+|---|------|------|
+| 9.1 | 创建 `fs-rag` 模块 | 模块 POM + 分包结构（controller/service/mapper/entity/client/parser/splitter/config） |
+| 9.2 | 数据库表 `rag_document`、`rag_chunk` | SQL 建表脚本 |
+| 9.3 | OpenAI 兼容客户端（自研） | `EmbeddingClient` + `ChatClient`（RestClient 封装） |
+| 9.4 | Qdrant 向量库客户端（自研 REST） | `QdrantClient`（集合管理 / upsert / search / delete） |
+| 9.5 | 文档解析与切片 | Tika 解析策略（Text/Tika）+ `TextSplitter` |
+| 9.6 | 文档入库 API | `POST /api/rag/documents`（文件）+ `POST /api/rag/documents/text`（文本） |
+| 9.7 | 语义检索 API | `POST /api/rag/search` |
+| 9.8 | 文档问答 API | `POST /api/rag/chat` |
+| 9.9 | 单元测试 | 切片器 / 客户端 / Service 测试 |
+
+**验证标准**：
+- [x] 上传 PDF/TXT → 语义检索命中相关内容
+- [ ] 问答返回基于文档内容的答案 + 来源引用
+- [ ] 不同工作空间检索互不可见（payload 过滤）
+- [ ] 新增模型服务只需改配置（base-url / api-key / model）
+
+---
 ## 总计预估工时
 
 | 阶段 | 天数 | 累计 |
@@ -224,4 +249,5 @@
 | P5 分片上传 | 3-4 天 | 第 20-23 天 |
 | P6 文件预览 | 3-4 天 | 第 24-27 天 |
 | P7 实时推送 | 2-3 天 | 第 28-30 天 |
-| **合计** | **22-30 天** | 约 **1 个月** |
+| P9 RAG 智能检索 | 4-5 天 | 第 31-35 天 |
+| **合计** | **26-35 天** | 约 **1 个月** |

@@ -8,6 +8,7 @@ import io.novafs.system.user.dto.LoginResponse;
 import io.novafs.system.user.dto.RegisterRequest;
 import io.novafs.system.user.dto.UserResponse;
 import io.novafs.system.user.entity.SysUser;
+import io.novafs.system.user.enums.UserStatus;
 import io.novafs.system.user.mapper.SysUserMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -38,7 +39,7 @@ public class SysUserService {
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setEmail(request.getEmail());
         user.setNickname(request.getUsername());
-        user.setStatus(0);
+        user.setStatus(UserStatus.NORMAL.getCode());
         user.setCreatedAt(LocalDateTime.now());
 
         sysUserMapper.insert(user);

@@ -1,0 +1,35 @@
+package io.novafs.system.workspace.invitation.dto;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.Data;
+
+import java.time.LocalDateTime;
+
+/**
+ * 邀请信息响应
+ */
+@Data
+@Schema(description = "邀请信息")
+public class InvitationResponse {
+
+    @Schema(description = "邀请ID")
+    private Long id;
+
+    @Schema(description = "邮箱")
+    private String email;
+
+    @Schema(description = "角色ID")
+    private Integer roleId;
+
+    @Schema(description = "状态: 0待接受 1已接受 2已过期 3已取消")
+    private Integer status;
+
+    @Schema(description = "过期时间")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime expiresAt;
+
+    @Schema(description = "创建时间")
+    @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+    private LocalDateTime createdAt;
+}

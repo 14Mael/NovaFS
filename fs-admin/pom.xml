@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
@@ -14,23 +14,18 @@
     <artifactId>fs-admin</artifactId>
     <packaging>jar</packaging>
     <name>NovaFS :: Admin</name>
-    <description>Spring Boot 鍚姩鍏ュ彛</description>
+    <description>Spring Boot 启动入口</description>
 
     <dependencies>
-        <!-- 鍐呴儴妯″潡 -->
-        <dependency>
-            <groupId>io.novafs</groupId>
-            <artifactId>fs-common-core</artifactId>
-            <version>${revision}</version>
-        </dependency>
-                <dependency>
-            <groupId>io.novafs</groupId>
-            <artifactId>fs-orm</artifactId>
-            <version>${revision}</version>
-        </dependency>
+        <!-- 内部模块 -->
         <dependency>
             <groupId>io.novafs</groupId>
             <artifactId>fs-system</artifactId>
+            <version>${revision}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.novafs</groupId>
+            <artifactId>fs-rag</artifactId>
             <version>${revision}</version>
         </dependency>
 
@@ -44,7 +39,7 @@
             <artifactId>spring-boot-starter-actuator</artifactId>
         </dependency>
 
-        <!-- 娴嬭瘯 -->
+        <!-- 测试 -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
@@ -69,4 +64,3 @@
         </plugins>
     </build>
 </project>
-
