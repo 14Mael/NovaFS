@@ -1,125 +1,65 @@
 # NovaFS — AI 开发助手行为指南
 
-## 项目概述
+## Project
 
-NovaFS（Nova File System）是一个企业级文件管理网盘系统，基于 **Spring Boot 3.4.x + Java 21 + MyBatis-Flex**，支持多云存储、文件预览、分片上传、团队协作等功能。
+NovaFS（Nova File System）——企业级文件管理网盘系统：多云存储插件、分片上传/断点续传、文件预览、团队工作空间 + RBAC、SSE 实时推送、邮件通知、国际化，以及基于 Qdrant 的 RAG 文档检索问答。
 
-## 技术栈
+- 技术栈：Java 21 · Spring Boot 3.4.x · MyBatis-Flex 1.11.x · Sa-Token 1.45.x · MySQL 8 · Redis + Caffeine · Maven 多模块
+- 启动入口：`fs-admin/src/main/java/io/novafs/NovaApplication.java`（组件扫描根包 `io.novafs`）
+- 数据库脚本：`_sql/schema.sql`（系统/RBAC）、`_sql/fs-file.sql`（文件/分片/分享）、`_sql/rag.sql`（RAG）
 
-| 类别 | 选型 |
-|---|---|
-| 语言 | Java 21 |
-| 框架 | Spring Boot 3.4.x |
-| ORM | MyBatis-Flex 1.11.x |
-| 认证授权 | Sa-Token 1.45.x |
-| 数据库 | MySQL 8.x |
-| 缓存 | Redis + Caffeine（多级缓存） |
-| 构建工具 | Maven 多模块 |
-| 对象转换 | MapStruct Plus |
-| 连接池 | HikariCP |
-| 接口文档 | SpringDoc OpenAPI |
+## Commands
 
-## 模块结构
+```bash
+mvn -q compile                                     # 全量编译
+mvn -q install -DskipTests                        # 安装内部模块到本地仓库（IDE 依赖解析失败时先执行）
+mvn -q test -pl fs-modules/fs-file -am -DskipTests=false     # 跑单个模块测试（根 pom 默认 skipTests=true，必须显式覆盖）
+mvn spring-boot:run -pl fs-admin                   # 启动应用（需先 docker compose up -d 起 MySQL/Redis/Qdrant）
+```
+
+- 现有测试：fs-file 12 个（分片合并/上传幂等/分享）、fs-rag 17 个、storage-plugin-local 10 个，共 39 个。
+- `fs-admin` 的 `NovaApplicationTests` 是 `@SpringBootTest`，需要 MySQL/Redis，默认跳过。
+
+## Architecture
 
 ```
 nova-fs/
-├── fs-admin/                # Spring Boot 启动入口
-├── fs-dependencies/         # BOM 统一依赖管理
-├── fs-framework/            # 基础设施层
-│   ├── fs-common-core/      # 公共核心（异常、返回结果、工具类）
-│   ├── fs-orm/              # ORM 配置（基础实体、类型处理器）
-│   ├── fs-redis/            # Redis 自动配置 + 通用仓储
-│   ├── fs-security/         # Sa-Token 认证配置
-│   ├── fs-sse/              # SSE 实时推送
-│   ├── fs-notify/           # 邮件通知（事件驱动）
-│   ├── fs-preview/          # 文件预览引擎（策略模式）
-│   └── fs-swagger/          # 接口文档配置
-├── fs-storage-plugin/       # 存储插件体系
-│   ├── storage-plugin-core/ # SPI 核心接口 + 抽象基类
-│   ├── storage-plugin-boot/ # Spring Boot 集成
-│   ├── storage-plugin-local/ # 本地存储
-│   ├── storage-plugin-minio/ # MinIO
-│   ├── storage-plugin-aliyunoss/ # 阿里云 OSS
-│   ├── storage-plugin-kodo/  # 七牛云 Kodo
-│   ├── storage-plugin-obs/   # 华为云 OBS
-│   └── storage-plugin-s3/    # S3 兼容
-├── fs-modules/              # 业务模块层
-│   ├── fs-system/            # 系统管理（用户、角色、工作空间）
-│   ├── fs-storage/           # 存储配置管理
-│   ├── fs-file/              # 文件核心业务
-│   └── fs-log/               # 操作日志
+├── fs-admin/             # 启动入口 + HealthController + SpaController + i18n 资源 + 国际化/通知配置
+├── fs-dependencies/      # BOM 统一依赖管理
+├── fs-framework/         # 基础设施层
+│   ├── fs-common-core/   # Result/PageQuery、BaseException/ErrorCode/GlobalExceptionHandler、JsonUtils/SpringUtils/MessageUtils
+│   ├── fs-orm/           # BaseEntity（雪花 ID + 时间自动填充）、MyBatis-Flex 配置、JsonStringTypeHandler
+│   ├── fs-redis/         # RedisTemplate 配置 + RedisRepository
+│   ├── fs-security/      # Sa-Token + JWT 配置（拦截 /api/**，白名单 /api/health、/api/auth/**、/api/share/**）
+│   ├── fs-sse/           # SSE 连接管理 + Redis Pub/Sub 多实例广播（SseConnectionManager/SsePublisher）
+│   └── fs-notify/        # 邮件通知（EmailNotifyService，novafs.notify.enabled 开关）
+├── fs-storage-plugin/    # 存储插件体系
+│   ├── storage-plugin-core/   # SPI 接口 IStorageOperationService + AbstractStorageOperationService + model/exception（纯 Java）
+│   ├── storage-plugin-boot/   # @StoragePlugin 注解 + StoragePluginRegistry（SPI+Bean 双通道）+ StorageServiceFacade
+│   └── storage-plugin-local/  # LocalStorageOperationService（上传/分片/MD5 校验/路径穿越防护）+ META-INF/services 注册
+├── fs-modules/           # 业务模块层
+│   ├── fs-system/        # 用户/认证/工作空间/RBAC（StpInterfaceImpl 查库）/存储配置实体/登录日志/SseController
+│   ├── fs-file/          # 文件核心+高级特性：秒传/分片上传断点续传/基础 CRUD/回收站/分享/预览（策略模式）/SSE 监听器
+│   └── fs-rag/           # 文档解析→切片→向量化→Qdrant 检索→问答（自研 RestClient，零框架绑定）
+└── _sql/                 # schema.sql / fs-file.sql / rag.sql
 ```
 
-## 关键设计原则
+依赖方向（单向）：`fs-admin` → `fs-modules` → `fs-framework` / `fs-storage-plugin`；`fs-file` 依赖 `fs-system`（工作空间/存储配置/用户）+ `storage-plugin-boot` + `fs-sse` + `fs-notify`；框架层不得依赖业务模块。
 
-### 1. 编码规范
-- 类名：`PascalCase`（如 `FileInfoServiceImpl`）
-- 方法名：`camelCase`（如 `uploadFileChunk`）
-- 常量：`UPPER_SNAKE_CASE`（如 `MAX_FILE_SIZE`）
-- 枚举值：统一 `UPPER_CASE`（如 `UPLOADING`），不要用小写
-- 包名：全小写单数（如 `io.novafs.file.service`）
+## Conventions
 
-### 2. 依赖注入
-- ✅ 只使用**构造器注入**（`@RequiredArgsConstructor` + `private final`）
-- ❌ 不要使用 `@Autowired` 字段注入
+- 类名 `PascalCase`、方法 `camelCase`、常量 `UPPER_SNAKE_CASE`、枚举值 `UPPER_CASE`、包名全小写单数。
+- 依赖注入只用构造器注入（`@RequiredArgsConstructor` + `private final`），禁用 `@Autowired` 字段注入。
+- 业务异常继承 `BaseException`（code + message），Service 抛、Controller 不 catch、`GlobalExceptionHandler` 统一转 `Result.fail()`；catch 块禁止吞异常。
+- 分层：Controller 薄（校验+调用）、Service 编排（@Transactional）、Mapper 无业务、Entity 充血模型（业务判断方法，如 `isDirectory()`/`canBeDeletedBy(userId)`）。
+- 状态字段用枚举（`UserStatus`/`TransferTaskStatus` 等，Entity 存 `Integer` + 枚举 `.getCode()` 比较），Boolean 而非 Y/N。
+- 单类 ≤300 行、单方法 ≤30 行、嵌套 ≤3 层。
+- 当前用户从 Sa-Token 取：`StpUtil.getLoginIdAsString()`（username）→ `SysUserService.findByUsername()` 拿 userId。
+- 路径安全：存储层做 `normalize()` + 前缀检查防穿越；分片/文件 MD5 双端校验。
+- 文件事件（`ChunkUploadProgressEvent`/`FileUploadCompleteEvent`）经 Spring Events 解耦，SSE/邮件监听器在 fs-file 的 `listener` 包。
 
-### 3. 异常处理
-- 业务异常继承 `BaseException`（含 `code` + `message`）
-- Service 层抛出业务异常，Controller 层不 catch
-- `GlobalExceptionHandler` 统一处理 → `Result.fail()`
-- catch 块中禁止吞没异常（仅 log.error 不 throw 视为吞没）
+## Notes
 
-### 4. 分层职责
-- **Controller**：参数校验 + 调用 Service，不包含业务逻辑
-- **Service**：业务逻辑编排，事务管理
-- **Mapper**：数据库操作，不含业务逻辑
-- **Entity**：充血模型——携带与自身相关的行为方法
-
-### 5. 代码规模
-- 单个类不超过 **300 行**（超过则拆分）
-- 单个方法不超过 **30 行**（超过则拆分子方法）
-- 方法嵌套不超过 **3 层**（超过则通过卫语句或策略模式简化）
-
-### 6. 领域模型
-- Entity 使用 `Boolean` 而非 `Y`/`N` 字符串
-- 状态字段使用枚举而非魔法数字
-- Entity 包含业务判断方法（如 `isDirectory()`、`canBeDeletedBy(userId)`）
-
-### 7. 包分层约定
-每个业务模块内部按功能分包：
-
-```
-fs-file/
-├── controller/        # 接收 HTTP 请求
-├── service/           # 业务接口
-│   └── impl/          # 业务实现
-├── mapper/            # MyBatis-Flex Mapper
-├── entity/            # 数据库实体（充血模型）
-├── dto/               # 数据传输对象
-├── vo/                # 视图对象（返回给前端）
-├── event/             # 领域事件
-└── enums/             # 模块专用枚举
-```
-
-## 开发节奏（分阶段）
-
-1. **P0 — 基础设施搭建**：多模块骨架、通用返回结果、全局异常、ORM 配置、数据库
-2. **P1 — 用户认证**：注册/登录/权限/工作空间
-3. **P2 — 存储插件体系**：SPI 接口 + 本地存储实现
-4. **P3 — 文件核心业务**：上传/下载/列表/删除/回收站
-5. **P4 — 高级特性**：分片上传/断点续传/文件预览/分享
-6. **P5 — 体验优化**：SSE 实时推送/国际化/通知
-7. **P9 — RAG 检索增强**：文档解析、向量化、语义检索、文档问答(模块 fs-rag,详见 docs/05-rag-design.md)
-
-## 测试要求
-- 核心 Service 必须有单元测试（JUnit 5 + Mockito）
-- 分片上传合并逻辑必须有测试覆盖
-- 存储插件接口必须有 SPI 加载测试
-- 使用 Testcontainers 测试 Redis/DB 交互
-
-## 优化目标（相对于原项目）
-- Service 类 ≤ 300 行（原项目有 1300+ 行的 God Class）
-- 事件驱动解耦（原项目 Service 直接调 SSE 推送）
-- 充血模型（原项目全是贫血模型）
-- 无 `Y`/`N` 魔法字符串
-- 测试覆盖率 > 60%（原项目 ≈ 0%）
+- 待办收尾：存储配置（StorageSettings）管理 Controller、Office 预览（LibreOffice 转 PDF）、`target/` 与 `.idea/` 已跟踪文件清理（`git rm -r --cached -- '*target*'`）、fs-swagger 文档模块。
+- 进度：P0–P5 + P9（RAG）已全部落地；P2 的 S3 兼容基类（AbstractS3CompatibleStorageService）留待 MinIO 插件时引入（依赖 AWS SDK）。
+- 分片上传接口对 `workspaceId` 未做成员校验（文件归属按 userId 校验），后续可挂 `NOT_WORKSPACE_MEMBER`。
