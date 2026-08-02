@@ -1,0 +1,15 @@
+:root {
+  --el-color-primary: #6366f1;
+  --novafs-bg: #f5f6fa;
+  --novafs-sidebar: #101426;
+  --novafs-sidebar-active: rgba(99, 102, 241, 0.16);
+}
+
+* { box-sizing: border-box; }
+
+html, body, #app {
+  height: 100%;
+  margin: 0;
+  font-family: 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', system-ui, sans-serif;
+  background: var(--novafs-bg);
+}
