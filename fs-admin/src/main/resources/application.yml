@@ -42,8 +42,13 @@ logging:
   level:
     io.novafs: DEBUG
 
-# ================= RAG 配置 =================
+# ================= 通知配置 =================
 novafs:
+  notify:
+    enabled: false            # 邮件通知开关，SMTP 用标准 spring.mail.* 配置
+    mail:
+      from: no-reply@example.com
+  # ================= RAG 配置 =================
   rag:
     enabled: true
     embedding:

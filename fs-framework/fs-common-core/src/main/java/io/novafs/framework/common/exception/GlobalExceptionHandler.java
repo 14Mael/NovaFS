@@ -1,6 +1,7 @@
 package io.novafs.framework.common.exception;
 
 import io.novafs.framework.common.model.Result;
+import io.novafs.framework.common.util.MessageUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -24,7 +25,8 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BaseException.class)
     public Result<Void> handleBaseException(BaseException e, HttpServletRequest request) {
         log.warn("业务异常 [{}]: {} | URI: {}", e.getCode(), e.getMessage(), request.getRequestURI());
-        return Result.fail(e.getCode(), e.getMessage());
+        String message = MessageUtils.getMessage("error." + e.getCode(), e.getMessage());
+        return Result.fail(e.getCode(), message);
     }
 
     /**
