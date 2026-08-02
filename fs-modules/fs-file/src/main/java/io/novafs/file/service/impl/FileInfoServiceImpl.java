@@ -114,7 +114,7 @@ public class FileInfoServiceImpl implements FileInfoService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void restore(Long fileId, Long userId) {
-        FileInfo file = requireOwnedFile(fileId, userId);
+        FileInfo file = requireOwnedFileIncludingDeleted(fileId, userId);
         file.setIsDeleted(false);
         file.setDeletedTime(null);
         fileInfoMapper.update(file);
@@ -123,7 +123,7 @@ public class FileInfoServiceImpl implements FileInfoService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void purge(Long fileId, Long userId) {
-        FileInfo file = requireOwnedFile(fileId, userId);
+        FileInfo file = requireOwnedFileIncludingDeleted(fileId, userId);
         if (!file.isDeleted()) {
             throw new BaseException(ErrorCode.BAD_REQUEST, "请先移入回收站再彻底删除");
         }
@@ -131,13 +131,28 @@ public class FileInfoServiceImpl implements FileInfoService {
             StorageConfigResolver.StorageTarget target = configResolver.resolve(file.getStoragePlatformSettingId());
             storageFacade.deleteFile(target.platformType(), target.config(), file.getObjectKey());
         }
-        fileInfoMapper.deleteById(fileId);
+        // deleteById 会被逻辑删除拦截成 UPDATE is_deleted=1，必须用物理删除 SQL
+        fileInfoMapper.deletePhysical(fileId);
         log.info("File purged: id={}", fileId);
     }
 
     // ===== 私有方法 =====
 
     private FileInfo requireOwnedFile(Long fileId, Long userId) {
+        FileInfo file = fileInfoMapper.selectOneById(fileId);
+        if (file == null) {
+            throw new BaseException(ErrorCode.FILE_NOT_FOUND);
+        }
+        if (!file.canBeDeletedBy(userId)) {
+            throw new BaseException(ErrorCode.FORBIDDEN);
+        }
+        return file;
+    }
+
+    /**
+     * 含已删除记录的归属校验（回收站恢复/彻底删除用）
+     */
+    private FileInfo requireOwnedFileIncludingDeleted(Long fileId, Long userId) {
         FileInfo file = fileInfoMapper.selectOneById(fileId);
         if (file == null) {
             throw new BaseException(ErrorCode.FILE_NOT_FOUND);

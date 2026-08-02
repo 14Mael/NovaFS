@@ -47,7 +47,7 @@ public class FileShareServiceImpl implements FileShareService {
     @Transactional(rollbackFor = Exception.class)
     public FileShareVO create(Long userId, FileShareRequest request) {
         FileInfo file = fileInfoMapper.selectOneById(request.getFileId());
-        if (file == null || !file.canBeDeletedBy(userId)) {
+        if (file == null || file.isDeleted() || !file.canBeDeletedBy(userId)) {
             throw new BaseException(ErrorCode.FORBIDDEN, "无权分享该文件");
         }
 
