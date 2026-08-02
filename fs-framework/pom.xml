@@ -21,5 +21,7 @@
         <module>fs-orm</module>
         <module>fs-redis</module>
         <module>fs-security</module>
+        <module>fs-sse</module>
+        <module>fs-notify</module>
     </modules>
 </project>

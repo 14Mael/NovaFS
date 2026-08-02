@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+         https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>io.novafs</groupId>
+        <artifactId>fs-framework</artifactId>
+        <version>${revision}</version>
+    </parent>
+
+    <artifactId>fs-sse</artifactId>
+    <packaging>jar</packaging>
+    <name>NovaFS :: Framework :: SSE</name>
+    <description>SSE 实时推送：连接管理 + Redis Pub/Sub 多实例广播</description>
+
+    <dependencies>
+        <dependency>
+            <groupId>io.novafs</groupId>
+            <artifactId>fs-common-core</artifactId>
+            <version>${revision}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.novafs</groupId>
+            <artifactId>fs-redis</artifactId>
+            <version>${revision}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-webmvc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+    </dependencies>
+</project>
