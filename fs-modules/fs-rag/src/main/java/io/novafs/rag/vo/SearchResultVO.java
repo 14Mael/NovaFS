@@ -1,5 +1,7 @@
 package io.novafs.rag.vo;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
 
 /**
@@ -12,12 +14,13 @@ public class SearchResultVO {
     private String pointId;
 
     /** 文档 ID */
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long documentId;
 
     /** 文档名称 */
     private String documentName;
 
-    /** 相似度分数(0~1) */
+    /** 相似度分数（0~1） */
     private Double score;
 
     /** 命中片段内容 */

@@ -1,5 +1,7 @@
 package io.novafs.file.dto;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
 
 /**
@@ -12,6 +14,7 @@ public class CheckMd5Result {
     private boolean exists;
 
     /** 已存在文件的 ID */
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long fileId;
 
     private String fileName;

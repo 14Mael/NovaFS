@@ -69,7 +69,7 @@ public class StorageSettingsServiceImpl implements StorageSettingsService {
     @Transactional(rollbackFor = Exception.class)
     public StorageSettingsResponse update(Long id, UpdateStorageRequest request) {
         StorageSettings settings = settingsMapper.selectOneById(id);
-        if (settings == null) {
+        if (settings == null || Boolean.TRUE.equals(settings.getIsDeleted())) {
             throw new BaseException(ErrorCode.BAD_REQUEST, "存储配置不存在");
         }
         if (request.getConfigData() != null && !request.getConfigData().isBlank()) {
@@ -90,7 +90,7 @@ public class StorageSettingsServiceImpl implements StorageSettingsService {
     @Transactional(rollbackFor = Exception.class)
     public void remove(Long id) {
         StorageSettings settings = settingsMapper.selectOneById(id);
-        if (settings == null) {
+        if (settings == null || Boolean.TRUE.equals(settings.getIsDeleted())) {
             throw new BaseException(ErrorCode.BAD_REQUEST, "存储配置不存在");
         }
         settings.setIsDeleted(true);

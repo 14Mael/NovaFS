@@ -1,6 +1,8 @@
 package io.novafs.system.workspace.invitation.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
@@ -14,6 +16,7 @@ import java.time.LocalDateTime;
 public class InvitationResponse {
 
     @Schema(description = "邀请ID")
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
 
     @Schema(description = "邮箱")

@@ -110,6 +110,10 @@
 
     <!-- 移动到 -->
     <el-dialog v-model="moveVisible" title="移动到" width="420px">
+      <div class="move-toolbar">
+        <el-button size="small" plain @click="moveToRoot">移动到根目录</el-button>
+        <span v-if="moveTargetName" class="move-current">当前选中：{{ moveTargetName }}</span>
+      </div>
       <el-tree
         :props="{ label: 'name', children: 'children' }"
         :load="loadMoveChildren"
@@ -158,6 +162,7 @@ const nameFile = ref<FileInfo | null>(null)
 const moveVisible = ref(false)
 const moveFile = ref<FileInfo | null>(null)
 const moveTarget = ref<string | null>(null)
+const moveTargetName = ref('')
 
 onMounted(() => load(1))
 
@@ -241,7 +246,13 @@ async function submitName() {
 function openMove(f: FileInfo) {
   moveFile.value = f
   moveTarget.value = null
+  moveTargetName.value = ''
   moveVisible.value = true
+}
+
+function moveToRoot() {
+  moveTarget.value = null
+  moveTargetName.value = ''
 }
 
 /** 懒加载目录树：根节点加载一级子文件夹，展开时加载更深层 */
@@ -259,8 +270,9 @@ async function loadMoveChildren(node: any, resolve: (data: unknown[]) => void) {
   }
 }
 
-function onMoveNodeClick(data: { id: string }) {
+function onMoveNodeClick(data: { id: string; name: string }) {
   moveTarget.value = data.id
+  moveTargetName.value = data.name
 }
 
 async function doMove() {
@@ -364,5 +376,7 @@ tr.dir .fname:hover { color: var(--novafs-primary); }
 
 .pager { margin-top: 20px; justify-content: center; }
 .move-tree { max-height: 300px; overflow-y: auto; }
+.move-toolbar { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.move-current { font-size: 12px; color: var(--novafs-primary); }
 .move-tip { font-size: 12px; color: var(--novafs-text-muted); margin-top: 8px; }
 </style>

@@ -1,5 +1,7 @@
 package io.novafs.rag.vo;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -10,10 +12,13 @@ import java.time.LocalDateTime;
 @Data
 public class DocumentVO {
 
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
 
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long workspaceId;
 
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long userId;
 
     private String name;

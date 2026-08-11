@@ -122,6 +122,36 @@ class FileFolderServiceImplTest {
     }
 
     @Test
+    void shouldNotDeadLoopOnCircularData() {
+        // 脏数据成环：200 -> 300 -> 200，防环上溯必须终止而非死循环
+        FileInfo dir = dir(100L, 10L, null, "root");
+        FileInfo a = dir(200L, 10L, 300L, "a");
+        FileInfo b = dir(300L, 10L, 200L, "b");
+        when(fileInfoMapper.selectOneById(100L)).thenReturn(dir);
+        when(fileInfoMapper.selectOneById(200L)).thenReturn(a);
+        when(fileInfoMapper.selectOneById(300L)).thenReturn(b);
+
+        assertThatThrownBy(() -> service.move(1L, 100L, 200L))
+                .isInstanceOf(BaseException.class)
+                .extracting(e -> ((BaseException) e).getCode())
+                .isEqualTo(ErrorCode.BAD_REQUEST.getCode());
+        verify(fileInfoMapper, never()).update(any());
+    }
+
+    @Test
+    void shouldRejectRenameDeletedFile() {
+        FileInfo file = file(100L, 10L, null, "old.txt", false);
+        file.setIsDeleted(true);
+        when(fileInfoMapper.selectOneById(100L)).thenReturn(file);
+
+        assertThatThrownBy(() -> service.rename(1L, 100L, "new.txt"))
+                .isInstanceOf(BaseException.class)
+                .extracting(e -> ((BaseException) e).getCode())
+                .isEqualTo(ErrorCode.FILE_NOT_FOUND.getCode());
+        verify(fileInfoMapper, never()).update(any());
+    }
+
+    @Test
     void shouldRejectTargetFolderFromOtherWorkspace() {
         FileInfo file = file(100L, 10L, null, "a.txt", false);
         FileInfo foreignDir = dir(300L, 99L, null, "foreign");

@@ -1,6 +1,8 @@
 package io.novafs.system.workspace.member.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
@@ -14,9 +16,11 @@ import java.time.LocalDateTime;
 public class MemberResponse {
 
     @Schema(description = "成员ID")
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
 
     @Schema(description = "用户ID")
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long userId;
 
     @Schema(description = "用户名")

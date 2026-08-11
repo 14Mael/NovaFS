@@ -11,6 +11,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
+import java.util.Set;
+
 /**
  * 文件夹管理服务实现
  */
@@ -110,12 +113,16 @@ public class FileFolderServiceImpl implements FileFolderService {
         }
     }
 
-    /** 防环：目标父目录不能是自身或自身的子孙目录 */
+    /** 防环：目标父目录不能是自身或自身的子孙目录（visited 防止脏数据环导致死循环） */
     private void ensureNotSelfOrDescendant(Long dirId, Long targetParentId) {
         Long cursor = targetParentId;
+        Set<Long> visited = new HashSet<>();
         while (cursor != null) {
             if (cursor.equals(dirId)) {
                 throw new BaseException(ErrorCode.BAD_REQUEST, "不能移动到自身或其子目录中");
+            }
+            if (!visited.add(cursor)) {
+                throw new BaseException(ErrorCode.BAD_REQUEST, "目录结构异常，无法移动");
             }
             FileInfo parent = fileInfoMapper.selectOneById(cursor);
             if (parent == null || parent.getParentId() == null) {
@@ -127,7 +134,7 @@ public class FileFolderServiceImpl implements FileFolderService {
 
     private FileInfo requireOwnedFile(Long fileId, Long userId) {
         FileInfo file = fileInfoMapper.selectOneById(fileId);
-        if (file == null) {
+        if (file == null || file.isDeleted()) {
             throw new BaseException(ErrorCode.FILE_NOT_FOUND);
         }
         if (!file.canBeDeletedBy(userId)) {
