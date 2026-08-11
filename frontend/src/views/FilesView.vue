@@ -45,7 +45,7 @@
         <tbody>
           <tr v-for="f in files" :key="f.id" :class="{ dir: f.isDir }">
             <td>
-              <span class="fname" :title="f.originalName" @dblclick="openFolder(f)">
+              <span class="fname" :title="f.originalName" @dblclick.prevent="openFolder(f)">
                 <span class="ficon">{{ iconOf(f) }}</span>
                 {{ f.originalName }}
               </span>
@@ -356,7 +356,7 @@ function formatTime(t: string): string {
 .file-table td { padding: 12px 16px; border-bottom: 1px solid #eef4fc; color: var(--novafs-text); }
 .file-table tr:hover td { background: #f7fbff; }
 .fname { font-weight: 500; cursor: default; }
-tr.dir .fname { cursor: pointer; }
+tr.dir .fname { cursor: pointer; user-select: none; -webkit-user-select: none; }
 tr.dir .fname:hover { color: var(--novafs-primary); }
 .ficon { margin-right: 6px; }
 .muted { color: var(--novafs-text-sub); }
