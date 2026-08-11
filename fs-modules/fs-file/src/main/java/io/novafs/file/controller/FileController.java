@@ -8,8 +8,10 @@ import io.novafs.file.dto.ChunkInitResponse;
 import io.novafs.file.dto.ChunkMergeRequest;
 import io.novafs.file.dto.ChunkUploadResponse;
 import io.novafs.file.dto.FileInfoVO;
+import io.novafs.file.dto.FolderNameRequest;
 import io.novafs.file.dto.UploadedChunksResponse;
 import io.novafs.file.service.ChunkUploadOrchestrator;
+import io.novafs.file.service.FileFolderService;
 import io.novafs.file.service.FileInfoService;
 import io.novafs.framework.common.model.PageQuery;
 import io.novafs.framework.common.model.PageResult;
@@ -24,6 +26,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -42,6 +45,7 @@ public class FileController {
 
     private final ChunkUploadOrchestrator orchestrator;
     private final FileInfoService fileInfoService;
+    private final FileFolderService fileFolderService;
     private final SysUserService sysUserService;
 
     // ===== 秒传与分片上传 =====
@@ -121,6 +125,28 @@ public class FileController {
     public Result<Void> delete(@PathVariable Long fileId) {
         fileInfoService.delete(fileId, currentUserId());
         return Result.ok();
+    }
+
+    /** 创建文件夹 */
+    @PostMapping("/folder")
+    public Result<FileInfoVO> createFolder(@RequestParam Long workspaceId,
+                                           @RequestParam(required = false) Long parentId,
+                                           @Valid @RequestBody FolderNameRequest request) {
+        return Result.ok(fileFolderService.createFolder(currentUserId(), workspaceId, parentId, request.getName()));
+    }
+
+    /** 重命名（文件或文件夹） */
+    @PutMapping("/{fileId}")
+    public Result<FileInfoVO> rename(@PathVariable Long fileId,
+                                     @Valid @RequestBody FolderNameRequest request) {
+        return Result.ok(fileFolderService.rename(currentUserId(), fileId, request.getName()));
+    }
+
+    /** 移动（parentId 为空表示移动到根目录） */
+    @PutMapping("/{fileId}/move")
+    public Result<FileInfoVO> move(@PathVariable Long fileId,
+                                   @RequestParam(required = false) Long parentId) {
+        return Result.ok(fileFolderService.move(currentUserId(), fileId, parentId));
     }
 
     /** 回收站列表 */

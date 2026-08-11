@@ -22,6 +22,9 @@
         <router-link to="/recycle" class="nav-item">
           <span class="icon">🗑</span> 回收站
         </router-link>
+        <router-link to="/storage" class="nav-item">
+          <span class="icon">◈</span> 存储设置
+        </router-link>
       </nav>
 
       <div class="footer">

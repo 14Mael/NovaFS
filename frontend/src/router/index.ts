@@ -13,7 +13,8 @@ const router = createRouter({
         { path: 'files', component: () => import('../views/FilesView.vue'), meta: { title: '我的文件' } },
         { path: 'chat', component: () => import('../views/ChatView.vue'), meta: { title: 'AI 问答' } },
         { path: 'library', component: () => import('../views/LibraryView.vue'), meta: { title: '文档库' } },
-        { path: 'recycle', component: () => import('../views/RecycleView.vue'), meta: { title: '回收站' } }
+        { path: 'recycle', component: () => import('../views/RecycleView.vue'), meta: { title: '回收站' } },
+        { path: 'storage', component: () => import('../views/StorageSettingsView.vue'), meta: { title: '存储设置' } }
       ]
     }
   ]

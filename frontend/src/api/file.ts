@@ -127,6 +127,21 @@ export const fileApi = {
     return request.delete<null>(`/file/${fileId}`)
   },
 
+  /** 创建文件夹 */
+  createFolder(workspaceId: number, parentId: number | null, name: string) {
+    return request.post<FileInfo>('/file/folder', { name }, { params: { workspaceId, parentId: parentId ?? undefined } })
+  },
+
+  /** 重命名（文件或文件夹） */
+  rename(fileId: number, name: string) {
+    return request.put<FileInfo>(`/file/${fileId}`, { name })
+  },
+
+  /** 移动（parentId 为空表示移动到根目录） */
+  move(fileId: number, parentId: number | null) {
+    return request.put<FileInfo>(`/file/${fileId}/move`, null, { params: { parentId: parentId ?? undefined } })
+  },
+
   /** 回收站列表 */
   recycle(workspaceId: number, page = 1, pageSize = 20) {
     return request.get<PageResult<FileInfo>>('/file/recycle', { params: { workspaceId, page, pageSize } })
