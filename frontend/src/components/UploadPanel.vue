@@ -48,6 +48,11 @@ interface UploadTask {
 
 const emit = defineEmits<{ (e: 'uploaded'): void }>()
 
+const props = defineProps<{
+  /** 当前所在文件夹 ID（null=根目录），上传文件归属到该目录 */
+  parentId: string | null
+}>()
+
 const tasks = ref<UploadTask[]>([])
 let seq = 0
 let closeSse: (() => void) | null = null
@@ -92,7 +97,7 @@ async function onUpload(options: UploadRequestOptions) {
     const md5 = await calcMd5(file)
     if (file.size <= UPLOAD_CHUNK_SIZE) {
       task.statusText = '上传中…'
-      await fileApi.upload(workspaceId(), file, settingId)
+      await fileApi.upload(workspaceId(), file, settingId, props.parentId)
       finish(task, '已上传')
       emit('uploaded')
       return
@@ -123,6 +128,7 @@ async function chunkUpload(task: UploadTask, file: File, md5: string, settingId:
     totalChunks: total,
     chunkSize: UPLOAD_CHUNK_SIZE,
     md5,
+    parentId: props.parentId,
     storagePlatformSettingId: settingId
   })
   task.uploadId = init.uploadId

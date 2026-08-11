@@ -75,10 +75,11 @@ export const fileApi = {
   },
 
   /** 普通上传（小文件） */
-  upload(workspaceId: string, file: File, storagePlatformSettingId: string) {
+  upload(workspaceId: string, file: File, storagePlatformSettingId: string, parentId: string | null) {
     const form = new FormData()
     form.append('workspaceId', workspaceId)
     form.append('storagePlatformSettingId', storagePlatformSettingId)
+    if (parentId) form.append('parentId', parentId)
     form.append('file', file)
     return request.post<FileInfo>('/file/upload', form)
   },
@@ -97,6 +98,7 @@ export const fileApi = {
       totalChunks: number
       chunkSize?: number
       md5?: string
+      parentId?: string | null
       storagePlatformSettingId: string
     }
   ) {

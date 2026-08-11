@@ -14,7 +14,7 @@
       </div>
     </header>
 
-    <UploadPanel @uploaded="load()" />
+    <UploadPanel :parent-id="parentId" @uploaded="load()" />
 
     <!-- 面包屑 -->
     <div class="crumbs">
