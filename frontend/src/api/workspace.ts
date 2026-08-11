@@ -2,11 +2,11 @@ import request from './request'
 
 /** 工作空间信息 */
 export interface Workspace {
-  id: number
+  id: string
   name: string
   slug: string
   description: string | null
-  ownerId: number
+  ownerId: string
   memberCount: number
   createdAt: string
   updatedAt: string
@@ -37,7 +37,7 @@ export const workspaceApi = {
   },
 
   /** 工作空间详情 */
-  detail(workspaceId: number) {
+  detail(workspaceId: string) {
     return request.get<WorkspaceDetail>(`/workspaces/${workspaceId}`)
   },
 
@@ -52,12 +52,12 @@ export const workspaceApi = {
   },
 
   /** 更新工作空间（需 member:manage 权限） */
-  update(workspaceId: number, data: UpdateWorkspaceParams) {
+  update(workspaceId: string, data: UpdateWorkspaceParams) {
     return request.put<Workspace>(`/workspaces/${workspaceId}`, data)
   },
 
   /** 删除工作空间（需 member:manage 权限） */
-  remove(workspaceId: number) {
+  remove(workspaceId: string) {
     return request.delete<null>(`/workspaces/${workspaceId}`)
   }
 }

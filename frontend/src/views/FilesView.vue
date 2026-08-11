@@ -84,10 +84,10 @@
 
     <PreviewDialog
       v-model="previewVisible"
-      :file-id="previewFile?.id ?? 0"
+      :file-id="previewFile?.id ?? ''"
       :file-name="previewFile?.originalName ?? ''"
     />
-    <ShareDialog v-model="shareVisible" :file-id="shareFile?.id ?? 0" :file-name="shareFile?.originalName ?? ''" />
+    <ShareDialog v-model="shareVisible" :file-id="shareFile?.id ?? ''" :file-name="shareFile?.originalName ?? ''" />
 
     <!-- 新建文件夹 / 重命名 -->
     <el-dialog
@@ -135,15 +135,15 @@ import UploadPanel from '../components/UploadPanel.vue'
 import PreviewDialog from '../components/PreviewDialog.vue'
 import ShareDialog from '../components/ShareDialog.vue'
 
-const workspaceId = () => Number(localStorage.getItem('novafs_workspace') || '1')
+const workspaceId = () => localStorage.getItem('novafs_workspace') || '1'
 
 const files = ref<FileInfo[]>([])
 const loading = ref(false)
 const page = ref(1)
 const pageSize = ref(20)
 const total = ref(0)
-const parentId = ref<number | null>(null)
-const crumbs = ref<{ id: number | null; name: string }[]>([{ id: null, name: '全部文件' }])
+const parentId = ref<string | null>(null)
+const crumbs = ref<{ id: string | null; name: string }[]>([{ id: null, name: '全部文件' }])
 
 const previewFile = ref<FileInfo | null>(null)
 const previewVisible = ref(false)
@@ -157,7 +157,7 @@ const nameFile = ref<FileInfo | null>(null)
 
 const moveVisible = ref(false)
 const moveFile = ref<FileInfo | null>(null)
-const moveTarget = ref<number | null>(null)
+const moveTarget = ref<string | null>(null)
 
 onMounted(() => load(1))
 
@@ -259,7 +259,7 @@ async function loadMoveChildren(node: any, resolve: (data: unknown[]) => void) {
   }
 }
 
-function onMoveNodeClick(data: { id: number }) {
+function onMoveNodeClick(data: { id: string }) {
   moveTarget.value = data.id
 }
 

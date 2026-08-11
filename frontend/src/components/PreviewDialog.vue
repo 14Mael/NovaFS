@@ -26,7 +26,7 @@ import { fileApi, fetchBlob, previewContentUrl } from '../api/file'
 
 const props = defineProps<{
   modelValue: boolean
-  fileId: number
+  fileId: string
   fileName: string
 }>()
 const emit = defineEmits<{ (e: 'update:modelValue', v: boolean): void }>()

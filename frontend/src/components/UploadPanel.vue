@@ -52,7 +52,7 @@ const tasks = ref<UploadTask[]>([])
 let seq = 0
 let closeSse: (() => void) | null = null
 
-const workspaceId = () => Number(localStorage.getItem('novafs_workspace') || '1')
+const workspaceId = () => localStorage.getItem('novafs_workspace') || '1'
 
 // SSE：上传进度/完成实时推送
 onMounted(() => {
@@ -65,7 +65,7 @@ onMounted(() => {
           task.percent = Math.max(task.percent, p.percent)
         }
       } else if (event === 'upload-complete') {
-        const c = data as { fileId: number; workspaceId: number }
+        const c = data as { fileId: string; workspaceId: string }
         if (c.workspaceId === workspaceId()) emit('uploaded')
       }
     }
@@ -115,7 +115,7 @@ async function onUpload(options: UploadRequestOptions) {
   }
 }
 
-async function chunkUpload(task: UploadTask, file: File, md5: string, settingId: number) {
+async function chunkUpload(task: UploadTask, file: File, md5: string, settingId: string) {
   const total = Math.ceil(file.size / UPLOAD_CHUNK_SIZE)
   const init = await fileApi.chunkInit(workspaceId(), {
     fileName: file.name,
@@ -167,12 +167,12 @@ async function chunkUpload(task: UploadTask, file: File, md5: string, settingId:
   emit('uploaded')
 }
 
-async function resolveSettingId(): Promise<number> {
+async function resolveSettingId(): Promise<string> {
   const cached = getStorageSettingId()
-  if (cached > 0) return cached
+  if (cached) return cached
   const list = await storageApi.listEnabled(workspaceId())
-  if (!list.length) return 0
-  localStorage.setItem('novafs_storage_setting_id', String(list[0].id))
+  if (!list.length) return ''
+  localStorage.setItem('novafs_storage_setting_id', list[0].id)
   return list[0].id
 }
 

@@ -1,6 +1,8 @@
 package io.novafs.system.workspace.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
@@ -14,6 +16,7 @@ import java.time.LocalDateTime;
 public class WorkspaceResponse {
 
     @Schema(description = "工作空间ID")
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
 
     @Schema(description = "工作空间名称")
@@ -26,6 +29,7 @@ public class WorkspaceResponse {
     private String description;
 
     @Schema(description = "所有者ID")
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long ownerId;
 
     @Schema(description = "成员数量")

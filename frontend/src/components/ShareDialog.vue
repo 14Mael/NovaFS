@@ -68,7 +68,7 @@ import { shareApi, type FileShareVO } from '../api/share'
 
 const props = defineProps<{
   modelValue: boolean
-  fileId: number
+  fileId: string
   fileName: string
 }>()
 const emit = defineEmits<{ (e: 'update:modelValue', v: boolean): void }>()

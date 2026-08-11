@@ -65,7 +65,7 @@ interface ChatMessage {
   sources?: SearchResult[]
 }
 
-const workspaceId = () => Number(localStorage.getItem('novafs_workspace') || '1')
+const workspaceId = () => localStorage.getItem('novafs_workspace') || '1'
 const messages = ref<ChatMessage[]>([])
 const input = ref('')
 const loading = ref(false)

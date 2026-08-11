@@ -2,8 +2,8 @@ import request from './request'
 
 /** 分享信息 */
 export interface FileShareVO {
-  id: number
-  fileId: number
+  id: string
+  fileId: string
   fileName: string
   suffix: string | null
   fileSize: number
@@ -17,7 +17,7 @@ export interface FileShareVO {
 }
 
 export interface CreateShareParams {
-  fileId: number
+  fileId: string
   sharePwd?: string
   expireTime?: string | null
   maxViewCount?: number
@@ -37,7 +37,7 @@ export const shareApi = {
   },
 
   /** 取消分享（需登录） */
-  cancel(shareId: number) {
+  cancel(shareId: string) {
     return request.delete<null>(`/shares/${shareId}`)
   },
 

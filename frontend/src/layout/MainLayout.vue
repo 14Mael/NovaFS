@@ -111,7 +111,7 @@ const router = useRouter()
 const user = computed(() => auth.user)
 const initial = computed(() => (user.value?.nickname || user.value?.username || 'U').slice(0, 1).toUpperCase())
 
-const currentWsId = ref(Number(localStorage.getItem('novafs_workspace') || '1'))
+const currentWsId = ref(localStorage.getItem('novafs_workspace') || '1')
 
 const createVisible = ref(false)
 const creating = ref(false)
@@ -126,7 +126,7 @@ onMounted(async () => {
   }
 })
 
-function switchWorkspace(id: number) {
+function switchWorkspace(id: string) {
   if (id === ws.currentId) return
   ws.switchTo(id)
   location.reload()
@@ -139,7 +139,7 @@ async function manualWorkspace() {
       inputPattern: /^\d+$/,
       inputErrorMessage: '必须是数字'
     })
-    ws.switchTo(Number(value))
+    ws.switchTo(value)
     location.reload()
   } catch {
     /* 取消 */

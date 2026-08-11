@@ -1,5 +1,7 @@
 package io.novafs.storage.settings.dto;
 
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
@@ -11,6 +13,7 @@ import lombok.Data;
 public class StorageSettingsResponse {
 
     @Schema(description = "配置ID")
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long id;
 
     @Schema(description = "存储平台标识符")
@@ -23,6 +26,7 @@ public class StorageSettingsResponse {
     private Boolean enabled;
 
     @Schema(description = "所属工作空间ID")
+    @JsonSerialize(using = ToStringSerializer.class)
     private Long workspaceId;
 
     @Schema(description = "备注")

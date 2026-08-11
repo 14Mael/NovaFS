@@ -1,9 +1,9 @@
 import request from './request'
 
 export interface RagDocument {
-  id: number
-  workspaceId: number
-  userId: number
+  id: string
+  workspaceId: string
+  userId: string
   name: string
   contentType: string
   size: number
@@ -16,7 +16,7 @@ export interface RagDocument {
 
 export interface SearchResult {
   pointId: string
-  documentId: number
+  documentId: string
   documentName: string
   score: number
   content: string
@@ -36,24 +36,24 @@ export interface PageResult<T> {
 }
 
 export const ragApi = {
-  upload(workspaceId: number, file: File) {
+  upload(workspaceId: string, file: File) {
     const form = new FormData()
     form.append('file', file)
     return request.post<RagDocument>(`/rag/documents?workspaceId=${workspaceId}`, form)
   },
-  ingestText(workspaceId: number, name: string, content: string) {
+  ingestText(workspaceId: string, name: string, content: string) {
     return request.post<RagDocument>('/rag/documents/text', { workspaceId, name, content })
   },
-  page(workspaceId: number, page = 1, pageSize = 20) {
+  page(workspaceId: string, page = 1, pageSize = 20) {
     return request.get<PageResult<RagDocument>>('/rag/documents', { params: { workspaceId, page, pageSize } })
   },
-  remove(id: number) {
+  remove(id: string) {
     return request.delete<null>(`/rag/documents/${id}`)
   },
-  search(workspaceId: number, query: string, topK?: number) {
+  search(workspaceId: string, query: string, topK?: number) {
     return request.post<SearchResult[]>('/rag/search', { workspaceId, query, topK })
   },
-  chat(workspaceId: number, question: string) {
+  chat(workspaceId: string, question: string) {
     return request.post<ChatResponse>('/rag/chat', { workspaceId, question })
   }
 }

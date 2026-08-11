@@ -7,8 +7,8 @@ export const useWorkspaceStore = defineStore('workspace', {
     loaded: false
   }),
   getters: {
-    currentId(): number {
-      return Number(localStorage.getItem('novafs_workspace') || '1')
+    currentId(): string {
+      return localStorage.getItem('novafs_workspace') || '1'
     },
     current(state): Workspace | null {
       return state.list.find((w) => w.id === this.currentId) || null
@@ -24,8 +24,8 @@ export const useWorkspaceStore = defineStore('workspace', {
         this.switchTo(list[0].id)
       }
     },
-    switchTo(id: number) {
-      localStorage.setItem('novafs_workspace', String(id))
+    switchTo(id: string) {
+      localStorage.setItem('novafs_workspace', id)
     },
     async create(params: CreateWorkspaceParams) {
       const ws = await workspaceApi.create(params)

@@ -60,7 +60,7 @@ import { onMounted, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { fileApi, type FileInfo } from '../api/file'
 
-const workspaceId = () => Number(localStorage.getItem('novafs_workspace') || '1')
+const workspaceId = () => localStorage.getItem('novafs_workspace') || '1'
 
 const files = ref<FileInfo[]>([])
 const loading = ref(false)

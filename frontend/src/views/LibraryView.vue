@@ -86,7 +86,7 @@ import { onMounted, ref } from 'vue'
 import { ElMessage, ElMessageBox, type UploadRequestOptions } from 'element-plus'
 import { ragApi, type RagDocument, type SearchResult } from '../api/rag'
 
-const workspaceId = () => Number(localStorage.getItem('novafs_workspace') || '1')
+const workspaceId = () => localStorage.getItem('novafs_workspace') || '1'
 const docs = ref<RagDocument[]>([])
 const loading = ref(false)
 const page = ref(1)

@@ -93,7 +93,7 @@ import { onMounted, reactive, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { storageApi, type StoragePlatform, type StorageSetting } from '../api/storage'
 
-const currentWorkspaceId = () => Number(localStorage.getItem('novafs_workspace') || '1')
+const currentWorkspaceId = () => localStorage.getItem('novafs_workspace') || '1'
 
 const list = ref<StorageSetting[]>([])
 const platforms = ref<StoragePlatform[]>([])

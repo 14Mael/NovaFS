@@ -2,10 +2,10 @@ import request from './request'
 
 /** 文件信息（file_info 表） */
 export interface FileInfo {
-  id: number
-  workspaceId: number
-  userId: number
-  parentId: number | null
+  id: string
+  workspaceId: string
+  userId: string
+  parentId: string | null
   originalName: string
   displayName: string | null
   suffix: string | null
@@ -28,7 +28,7 @@ export interface PageResult<T> {
 /** 秒传校验结果 */
 export interface CheckMd5Result {
   exists: boolean
-  fileId?: number
+  fileId?: string
   fileName?: string
   fileSize?: number
 }
@@ -62,42 +62,42 @@ const FILE_CHUNK_SIZE = 5 * 1024 * 1024 // 5MB
 export const UPLOAD_CHUNK_SIZE = FILE_CHUNK_SIZE
 
 /** 从 localStorage 读取存储配置 ID（上传目标） */
-export function getStorageSettingId(): number {
-  return Number(localStorage.getItem('novafs_storage_setting_id') || '0')
+export function getStorageSettingId(): string {
+  return localStorage.getItem('novafs_storage_setting_id') || ''
 }
 
 export const fileApi = {
   /** 文件列表 */
-  list(workspaceId: number, params: { parentId?: number | null; page?: number; pageSize?: number }) {
+  list(workspaceId: string, params: { parentId?: string | null; page?: number; pageSize?: number }) {
     return request.get<PageResult<FileInfo>>('/file/list', {
       params: { workspaceId, parentId: params.parentId ?? undefined, page: params.page ?? 1, pageSize: params.pageSize ?? 20 }
     })
   },
 
   /** 普通上传（小文件） */
-  upload(workspaceId: number, file: File, storagePlatformSettingId: number) {
+  upload(workspaceId: string, file: File, storagePlatformSettingId: string) {
     const form = new FormData()
-    form.append('workspaceId', String(workspaceId))
-    form.append('storagePlatformSettingId', String(storagePlatformSettingId))
+    form.append('workspaceId', workspaceId)
+    form.append('storagePlatformSettingId', storagePlatformSettingId)
     form.append('file', file)
     return request.post<FileInfo>('/file/upload', form)
   },
 
   /** 秒传校验 */
-  checkMd5(workspaceId: number, data: { md5: string; fileName: string; fileSize: number }) {
+  checkMd5(workspaceId: string, data: { md5: string; fileName: string; fileSize: number }) {
     return request.post<CheckMd5Result>('/file/check-md5', data, { params: { workspaceId } })
   },
 
   /** 初始化分片上传 */
   chunkInit(
-    workspaceId: number,
+    workspaceId: string,
     data: {
       fileName: string
       fileSize: number
       totalChunks: number
       chunkSize?: number
       md5?: string
-      storagePlatformSettingId: number
+      storagePlatformSettingId: string
     }
   ) {
     return request.post<ChunkInitResponse>('/file/chunk/init', data, { params: { workspaceId } })
@@ -118,47 +118,47 @@ export const fileApi = {
   },
 
   /** 合并分片 */
-  chunkMerge(workspaceId: number, data: { uploadId: string; fileName: string; md5?: string }) {
+  chunkMerge(workspaceId: string, data: { uploadId: string; fileName: string; md5?: string }) {
     return request.post<FileInfo>('/file/chunk/merge', data, { params: { workspaceId } })
   },
 
   /** 删除（软删除进回收站） */
-  remove(fileId: number) {
+  remove(fileId: string) {
     return request.delete<null>(`/file/${fileId}`)
   },
 
   /** 创建文件夹 */
-  createFolder(workspaceId: number, parentId: number | null, name: string) {
+  createFolder(workspaceId: string, parentId: string | null, name: string) {
     return request.post<FileInfo>('/file/folder', { name }, { params: { workspaceId, parentId: parentId ?? undefined } })
   },
 
   /** 重命名（文件或文件夹） */
-  rename(fileId: number, name: string) {
+  rename(fileId: string, name: string) {
     return request.put<FileInfo>(`/file/${fileId}`, { name })
   },
 
   /** 移动（parentId 为空表示移动到根目录） */
-  move(fileId: number, parentId: number | null) {
+  move(fileId: string, parentId: string | null) {
     return request.put<FileInfo>(`/file/${fileId}/move`, null, { params: { parentId: parentId ?? undefined } })
   },
 
   /** 回收站列表 */
-  recycle(workspaceId: number, page = 1, pageSize = 20) {
+  recycle(workspaceId: string, page = 1, pageSize = 20) {
     return request.get<PageResult<FileInfo>>('/file/recycle', { params: { workspaceId, page, pageSize } })
   },
 
   /** 从回收站恢复 */
-  restore(fileId: number) {
+  restore(fileId: string) {
     return request.post<null>(`/file/${fileId}/restore`)
   },
 
   /** 彻底删除 */
-  purge(fileId: number) {
+  purge(fileId: string) {
     return request.delete<null>(`/file/${fileId}/purge`)
   },
 
   /** 预览信息 */
-  preview(fileId: number) {
+  preview(fileId: string) {
     return request.get<FilePreviewInfo>(`/file/preview/${fileId}`)
   }
 }
@@ -173,10 +173,10 @@ export async function fetchBlob(url: string): Promise<Blob> {
   return resp.blob()
 }
 
-export function downloadUrl(fileId: number): string {
+export function downloadUrl(fileId: string): string {
   return `/api/file/download/${fileId}`
 }
 
-export function previewContentUrl(fileId: number): string {
+export function previewContentUrl(fileId: string): string {
   return `/api/file/preview/content/${fileId}`
 }
