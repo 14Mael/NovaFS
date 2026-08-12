@@ -74,6 +74,13 @@ export const fileApi = {
     })
   },
 
+  /** 按文件名搜索（工作空间范围内） */
+  search(workspaceId: string, keyword: string, page = 1, pageSize = 20) {
+    return request.get<PageResult<FileInfo>>('/file/search', {
+      params: { workspaceId, keyword, page, pageSize }
+    })
+  },
+
   /** 普通上传（小文件） */
   upload(workspaceId: string, file: File, storagePlatformSettingId: string, parentId: string | null) {
     const form = new FormData()

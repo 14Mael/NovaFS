@@ -23,6 +23,11 @@ public interface FileInfoService {
     PageResult<FileInfoVO> list(Long workspaceId, Long parentId, PageQuery pageQuery);
 
     /**
+     * 按文件名模糊搜索（工作空间范围内）
+     */
+    PageResult<FileInfoVO> search(Long workspaceId, String keyword, PageQuery pageQuery);
+
+    /**
      * 下载文件
      */
     InputStream download(Long fileId, Long userId);

@@ -6,6 +6,18 @@
         <span class="sub">共 {{ total }} 项 · 支持秒传 / 分片上传 / 断点续传</span>
       </div>
       <div class="header-actions">
+        <el-input
+          v-model="searchKeyword"
+          placeholder="搜索文件名…"
+          clearable
+          class="search-input"
+          @keyup.enter="doSearch"
+          @clear="clearSearch"
+        >
+          <template #append>
+            <el-button @click="doSearch">搜索</el-button>
+          </template>
+        </el-input>
         <el-button type="primary" plain @click="openCreateFolder">＋ 新建文件夹</el-button>
         <el-button @click="load()">刷新</el-button>
         <router-link to="/recycle">
@@ -16,8 +28,12 @@
 
     <UploadPanel :parent-id="parentId" @uploaded="load()" />
 
-    <!-- 面包屑 -->
-    <div class="crumbs">
+    <!-- 面包屑 / 搜索态 -->
+    <div v-if="searching" class="crumbs search-crumb">
+      <span>🔍 搜索「{{ searchKeyword }}」的结果（{{ total }} 项）</span>
+      <el-button link type="primary" @click="clearSearch">清除搜索返回目录</el-button>
+    </div>
+    <div v-else class="crumbs">
       <el-breadcrumb separator="/">
         <el-breadcrumb-item
           v-for="(c, i) in crumbs"
@@ -79,7 +95,7 @@
       :total="total"
       :page-size="pageSize"
       :current-page="page"
-      @current-change="load"
+      @current-change="onPageChange"
     />
 
     <PreviewDialog
@@ -164,6 +180,9 @@ const moveFile = ref<FileInfo | null>(null)
 const moveTarget = ref<string | null>(null)
 const moveTargetName = ref('')
 
+const searchKeyword = ref('')
+const searching = ref(false)
+
 onMounted(() => load(1))
 
 async function load(p = page.value) {
@@ -181,6 +200,37 @@ async function load(p = page.value) {
     /* 拦截器已提示 */
   } finally {
     loading.value = false
+  }
+}
+
+async function doSearch() {
+  const kw = searchKeyword.value.trim()
+  if (!kw) return
+  searching.value = true
+  loading.value = true
+  try {
+    const resp = await fileApi.search(workspaceId(), kw, page.value, pageSize.value)
+    files.value = resp.records
+    total.value = resp.total
+  } catch {
+    /* 拦截器已提示 */
+  } finally {
+    loading.value = false
+  }
+}
+
+function clearSearch() {
+  searchKeyword.value = ''
+  searching.value = false
+  load(1)
+}
+
+function onPageChange(p: number) {
+  page.value = p
+  if (searching.value) {
+    doSearch()
+  } else {
+    load(p)
   }
 }
 
@@ -344,13 +394,15 @@ function formatTime(t: string): string {
 .files-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; }
 .files-header h2 { margin: 0 0 4px; font-size: 20px; color: var(--novafs-text); }
 .files-header .sub { font-size: 13px; color: var(--novafs-text-sub); }
-.header-actions { display: flex; gap: 8px; }
+.header-actions { display: flex; gap: 8px; align-items: center; }
 .header-actions a { text-decoration: none; }
+.search-input { width: 220px; }
 
 .crumbs { margin: 14px 0 10px; }
 .crumb { cursor: pointer; font-size: 13px; }
 .crumb:hover { color: var(--novafs-primary); }
 .crumb.active { color: var(--novafs-primary-dark); font-weight: 600; }
+.search-crumb { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--novafs-text); }
 
 .list-wrap {
   background: #fff;

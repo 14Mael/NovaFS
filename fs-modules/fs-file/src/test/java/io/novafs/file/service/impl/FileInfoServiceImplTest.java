@@ -4,6 +4,9 @@ import io.novafs.file.dto.FileInfoVO;
 import io.novafs.file.entity.FileInfo;
 import io.novafs.file.mapper.FileInfoMapper;
 import io.novafs.file.storage.StorageConfigResolver;
+import io.novafs.framework.common.model.PageQuery;
+import io.novafs.framework.common.model.PageResult;
+import com.mybatisflex.core.query.QueryWrapper;
 import io.novafs.storage.plugin.boot.StorageServiceFacade;
 import io.novafs.storage.plugin.core.model.FileUploadRequest;
 import io.novafs.storage.plugin.core.model.StorageConfig;
@@ -18,9 +21,11 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -39,6 +44,30 @@ class FileInfoServiceImplTest {
 
     @InjectMocks
     private FileInfoServiceImpl service;
+
+    @Test
+    void shouldSearchFileByName() {
+        FileInfo file = new FileInfo();
+        file.setId(100L);
+        file.setWorkspaceId(10L);
+        file.setOriginalName("年度报告.pdf");
+        com.mybatisflex.core.paginate.Page<FileInfo> page = new com.mybatisflex.core.paginate.Page<>();
+        page.setRecords(List.of(file));
+        page.setTotalRow(1);
+        when(fileInfoMapper.paginate(anyInt(), anyInt(), any(QueryWrapper.class))).thenReturn(page);
+
+        PageQuery query = new PageQuery();
+        PageResult<FileInfoVO> result = service.search(10L, "报告", query);
+
+        assertThat(result.getTotal()).isEqualTo(1);
+        assertThat(result.getRecords().get(0).getOriginalName()).isEqualTo("年度报告.pdf");
+    }
+
+    @Test
+    void shouldReturnEmptyWhenKeywordBlank() {
+        PageResult<FileInfoVO> result = service.search(10L, "   ", new PageQuery());
+        assertThat(result.getRecords()).isEmpty();
+    }
 
     @Test
     void shouldRecordRealFileSizeAndMd5OnUpload() throws IOException {

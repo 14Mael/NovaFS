@@ -111,6 +111,18 @@ public class FileController {
         return Result.ok(fileInfoService.list(workspaceId, parentId, query));
     }
 
+    /** 按文件名搜索（工作空间范围内） */
+    @GetMapping("/search")
+    public Result<PageResult<FileInfoVO>> search(@RequestParam Long workspaceId,
+                                                 @RequestParam String keyword,
+                                                 @RequestParam(defaultValue = "1") int page,
+                                                 @RequestParam(defaultValue = "20") int pageSize) {
+        PageQuery query = new PageQuery();
+        query.setPage(page);
+        query.setPageSize(pageSize);
+        return Result.ok(fileInfoService.search(workspaceId, keyword, query));
+    }
+
     /** 下载 */
     @GetMapping("/download/{fileId}")
     public ResponseEntity<InputStreamResource> download(@PathVariable Long fileId) {
