@@ -8,6 +8,14 @@ import io.novafs.system.workspace.dto.CreateWorkspaceRequest;
 import io.novafs.system.workspace.dto.UpdateWorkspaceRequest;
 import io.novafs.system.workspace.dto.WorkspaceDetailResponse;
 import io.novafs.system.workspace.dto.WorkspaceResponse;
+import io.novafs.system.workspace.invitation.dto.AcceptInvitationRequest;
+import io.novafs.system.workspace.invitation.dto.CreateInvitationRequest;
+import io.novafs.system.workspace.invitation.dto.InvitationResponse;
+import io.novafs.system.workspace.invitation.service.InvitationService;
+import io.novafs.system.workspace.member.dto.MemberResponse;
+import io.novafs.system.workspace.member.dto.UpdateMemberRoleRequest;
+import io.novafs.system.workspace.member.service.MemberService;
+import io.novafs.system.workspace.role.dto.RoleResponse;
 import io.novafs.system.workspace.service.SysWorkspaceService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +41,8 @@ public class WorkspaceController {
 
     private final SysWorkspaceService workspaceService;
     private final SysUserService sysUserService;
+    private final MemberService memberService;
+    private final InvitationService invitationService;
 
     /**
      * 查询当前用户的工作空间列表
@@ -84,6 +94,66 @@ public class WorkspaceController {
     public Result<Void> delete(@PathVariable Long workspaceId) {
         workspaceService.deleteWorkspace(workspaceId, currentUserId());
         return Result.ok();
+    }
+
+    // ===== 成员管理 =====
+
+    /** 成员列表 */
+    @GetMapping("/{workspaceId}/members")
+    public Result<List<MemberResponse>> listMembers(@PathVariable Long workspaceId) {
+        return Result.ok(memberService.listMembers(workspaceId, currentUserId()));
+    }
+
+    /** 修改成员角色（需管理员） */
+    @PutMapping("/{workspaceId}/members/{memberId}")
+    public Result<Void> updateMemberRole(@PathVariable Long workspaceId,
+                                         @PathVariable Long memberId,
+                                         @Valid @RequestBody UpdateMemberRoleRequest request) {
+        memberService.updateRole(workspaceId, memberId, request.getRoleId(), currentUserId());
+        return Result.ok();
+    }
+
+    /** 移除成员（需管理员，不能移除空间所有者） */
+    @DeleteMapping("/{workspaceId}/members/{memberId}")
+    public Result<Void> removeMember(@PathVariable Long workspaceId,
+                                     @PathVariable Long memberId) {
+        memberService.removeMember(workspaceId, memberId, currentUserId());
+        return Result.ok();
+    }
+
+    /** 角色列表（管理员管理成员/邀请用） */
+    @GetMapping("/{workspaceId}/roles")
+    public Result<List<RoleResponse>> listRoles(@PathVariable Long workspaceId) {
+        return Result.ok(memberService.listRoles(workspaceId, currentUserId()));
+    }
+
+    // ===== 成员邀请 =====
+
+    /** 创建邀请并发送邮件（需管理员） */
+    @PostMapping("/{workspaceId}/invitations")
+    public Result<InvitationResponse> createInvitation(@PathVariable Long workspaceId,
+                                                       @Valid @RequestBody CreateInvitationRequest request) {
+        return Result.ok(invitationService.createInvitation(workspaceId, currentUserId(), request));
+    }
+
+    /** 邀请列表（需管理员） */
+    @GetMapping("/{workspaceId}/invitations")
+    public Result<List<InvitationResponse>> listInvitations(@PathVariable Long workspaceId) {
+        return Result.ok(invitationService.listInvitations(workspaceId, currentUserId()));
+    }
+
+    /** 取消邀请（需管理员） */
+    @DeleteMapping("/{workspaceId}/invitations/{invitationId}")
+    public Result<Void> cancelInvitation(@PathVariable Long workspaceId,
+                                         @PathVariable Long invitationId) {
+        invitationService.cancelInvitation(workspaceId, invitationId, currentUserId());
+        return Result.ok();
+    }
+
+    /** 通过邀请令牌加入工作空间（登录用户） */
+    @PostMapping("/invitations/accept")
+    public Result<WorkspaceResponse> acceptInvitation(@Valid @RequestBody AcceptInvitationRequest request) {
+        return Result.ok(invitationService.acceptInvitation(currentUserId(), request.getToken()));
     }
 
     private Long currentUserId() {

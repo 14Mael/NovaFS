@@ -5,6 +5,7 @@ const router = createRouter({
   routes: [
     { path: '/login', component: () => import('../views/LoginView.vue'), meta: { public: true } },
     { path: '/share/:code', component: () => import('../views/ShareView.vue'), meta: { public: true } },
+    { path: '/join', component: () => import('../views/JoinView.vue') },
     {
       path: '/',
       component: () => import('../layout/MainLayout.vue'),
@@ -14,6 +15,7 @@ const router = createRouter({
         { path: 'chat', component: () => import('../views/ChatView.vue'), meta: { title: 'AI 问答' } },
         { path: 'library', component: () => import('../views/LibraryView.vue'), meta: { title: '文档库' } },
         { path: 'recycle', component: () => import('../views/RecycleView.vue'), meta: { title: '回收站' } },
+        { path: 'members', component: () => import('../views/MembersView.vue'), meta: { title: '成员管理' } },
         { path: 'storage', component: () => import('../views/StorageSettingsView.vue'), meta: { title: '存储设置' } }
       ]
     }

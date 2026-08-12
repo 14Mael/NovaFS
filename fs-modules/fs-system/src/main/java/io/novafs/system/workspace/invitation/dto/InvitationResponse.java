@@ -22,6 +22,9 @@ public class InvitationResponse {
     @Schema(description = "邮箱")
     private String email;
 
+    @Schema(description = "邀请令牌（创建时返回，供拼接邀请链接）")
+    private String token;
+
     @Schema(description = "角色ID")
     private Integer roleId;
 

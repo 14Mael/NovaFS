@@ -11,12 +11,16 @@ io\novafs\storage\settings\service\StorageSettingsService.class
 io\novafs\system\user\dto\LoginResponse.class
 io\novafs\storage\settings\mapper\StorageSettingsMapper.class
 io\novafs\storage\settings\entity\StorageSettings.class
+io\novafs\system\workspace\member\dto\UpdateMemberRoleRequest.class
+io\novafs\system\workspace\invitation\dto\AcceptInvitationRequest.class
 io\novafs\system\workspace\role\entity\SysRolePermission.class
 io\novafs\system\workspace\role\dto\RoleResponse.class
 io\novafs\system\workspace\invitation\mapper\SysWorkspaceInvitationMapper.class
+io\novafs\system\workspace\member\service\impl\MemberServiceImpl.class
 io\novafs\system\workspace\entity\SysWorkspace.class
 io\novafs\storage\settings\service\impl\StorageSettingsServiceImpl.class
 io\novafs\system\security\StpInterfaceImpl.class
+io\novafs\system\workspace\invitation\service\InvitationService.class
 io\novafs\log\login\entity\SysLoginLog.class
 io\novafs\storage\settings\dto\UpdateStorageRequest.class
 io\novafs\system\workspace\invitation\dto\CreateInvitationRequest.class
@@ -35,6 +39,7 @@ io\novafs\system\auth\dto\LoginResponse.class
 io\novafs\storage\platform\entity\StoragePlatform.class
 io\novafs\system\workspace\invitation\entity\SysWorkspaceInvitation.class
 io\novafs\system\auth\AuthController.class
+io\novafs\system\workspace\member\service\MemberService.class
 io\novafs\system\workspace\dto\WorkspaceDetailResponse.class
 io\novafs\system\user\dto\LoginRequest.class
 io\novafs\storage\platform\dto\StoragePlatformResponse.class
@@ -46,6 +51,7 @@ io\novafs\system\user\service\SysUserService.class
 io\novafs\storage\platform\mapper\StoragePlatformMapper.class
 io\novafs\system\user\enums\UserStatus.class
 io\novafs\system\workspace\invitation\dto\InvitationResponse.class
+io\novafs\system\workspace\invitation\service\impl\InvitationServiceImpl.class
 io\novafs\log\login\dto\LoginLogResponse.class
 io\novafs\system\workspace\member\dto\MemberResponse.class
 io\novafs\storage\settings\dto\CreateStorageRequest.class
