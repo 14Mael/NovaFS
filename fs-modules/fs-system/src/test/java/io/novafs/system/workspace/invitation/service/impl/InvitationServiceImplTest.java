@@ -66,7 +66,6 @@ class InvitationServiceImplTest {
         SysWorkspace ws = workspace(10L, 1L);
         when(workspaceMapper.selectOneById(10L)).thenReturn(ws);
         when(invitationMapper.selectCountByQuery(any())).thenReturn(0L);
-        when(memberMapper.selectCountByQuery(any())).thenReturn(0L);
         when(roleMapper.selectCountByQuery(any())).thenReturn(1L);
 
         CreateInvitationRequest request = new CreateInvitationRequest();
@@ -88,6 +87,7 @@ class InvitationServiceImplTest {
     void shouldRejectDuplicatePendingInvitation() {
         SysWorkspace ws = workspace(10L, 1L);
         when(workspaceMapper.selectOneById(10L)).thenReturn(ws);
+        when(roleMapper.selectCountByQuery(any())).thenReturn(1L);
         when(invitationMapper.selectCountByQuery(any())).thenReturn(1L);
 
         CreateInvitationRequest request = new CreateInvitationRequest();
@@ -107,6 +107,7 @@ class InvitationServiceImplTest {
         SysUser user = new SysUser();
         user.setId(100L);
         when(workspaceMapper.selectOneById(10L)).thenReturn(ws);
+        when(roleMapper.selectCountByQuery(any())).thenReturn(1L);
         when(invitationMapper.selectCountByQuery(any())).thenReturn(0L);
         when(userMapper.selectOneByQuery(any())).thenReturn(user);
         when(memberMapper.selectCountByQuery(any())).thenReturn(1L);
