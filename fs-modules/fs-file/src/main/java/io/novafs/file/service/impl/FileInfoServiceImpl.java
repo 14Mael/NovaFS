@@ -130,10 +130,9 @@ public class FileInfoServiceImpl implements FileInfoService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void restore(Long fileId, Long userId) {
-        FileInfo file = requireOwnedFileIncludingDeleted(fileId, userId);
-        file.setIsDeleted(false);
-        file.setDeletedTime(null);
-        fileInfoMapper.update(file);
+        requireOwnedFileIncludingDeleted(fileId, userId);
+        // 显式更新（含 null）：entity update 忽略 null 字段，deleted_time 必须清空
+        fileInfoMapper.restoreRecord(fileId);
     }
 
     @Override

@@ -4,7 +4,10 @@
       <div class="upload-inner">
         <div class="upload-icon">⬆</div>
         <div class="upload-text">拖拽文件到此处，或 <em>点击上传</em></div>
-        <div class="upload-hint">≤5MB 直传 · 大文件自动分片（断点续传）· MD5 秒传</div>
+        <div class="upload-hint">
+          ≤5MB 直传 · 大文件自动分片（断点续传）· MD5 秒传
+        </div>
+        <div class="upload-target">📂 将上传到：{{ props.parentName }}</div>
       </div>
     </el-upload>
 
@@ -51,6 +54,8 @@ const emit = defineEmits<{ (e: 'uploaded'): void }>()
 const props = defineProps<{
   /** 当前所在文件夹 ID（null=根目录），上传文件归属到该目录 */
   parentId: string | null
+  /** 当前所在文件夹名称（提示用） */
+  parentName: string
 }>()
 
 const tasks = ref<UploadTask[]>([])
@@ -217,6 +222,7 @@ function finish(task: UploadTask, text: string) {
 .upload-text { font-size: 14px; color: #4a6a96; margin-top: 6px; }
 .upload-text em { color: var(--novafs-primary); font-style: normal; font-weight: 600; }
 .upload-hint { font-size: 12px; color: var(--novafs-text-muted); margin-top: 4px; }
+.upload-target { font-size: 12px; color: var(--novafs-primary); margin-top: 4px; }
 
 .task-list { margin-top: 14px; display: flex; flex-direction: column; gap: 10px; }
 .task {

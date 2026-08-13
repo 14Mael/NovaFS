@@ -26,7 +26,7 @@
       </div>
     </header>
 
-    <UploadPanel :parent-id="parentId" @uploaded="load()" />
+    <UploadPanel :parent-id="parentId" :parent-name="currentDirName" @uploaded="load()" />
 
     <!-- 面包屑 / 搜索态 -->
     <div v-if="searching" class="crumbs search-crumb">
@@ -114,7 +114,7 @@
     >
       <el-input
         v-model="nameValue"
-        :placeholder="nameDialogMode === 'create' ? '请输入文件夹名称' : '请输入新名称'"
+        :placeholder="nameDialogMode === 'create' ? '请输入文件夹名称' : '请输入新名称（后缀将自动保留）'"
         maxlength="255"
         @keyup.enter="submitName"
       />
@@ -148,7 +148,7 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { fileApi, fetchBlob, downloadUrl, type FileInfo } from '../api/file'
 import UploadPanel from '../components/UploadPanel.vue'
@@ -164,6 +164,10 @@ const pageSize = ref(20)
 const total = ref(0)
 const parentId = ref<string | null>(null)
 const crumbs = ref<{ id: string | null; name: string }[]>([{ id: null, name: '全部文件' }])
+const currentDirName = computed(() => {
+  const last = crumbs.value[crumbs.value.length - 1]
+  return last && last.id !== null ? last.name : '根目录'
+})
 
 const previewFile = ref<FileInfo | null>(null)
 const previewVisible = ref(false)
@@ -267,9 +271,16 @@ function openCreateFolder() {
 
 function openRename(f: FileInfo) {
   nameDialogMode.value = 'rename'
-  nameValue.value = f.originalName
+  // 文件只允许修改主名，后缀自动保留
+  nameValue.value = f.isDir ? f.originalName : splitExt(f.originalName).base
   nameFile.value = f
   nameDialogVisible.value = true
+}
+
+function splitExt(name: string): { base: string; ext: string } {
+  const idx = name.lastIndexOf('.')
+  if (idx <= 0) return { base: name, ext: '' }
+  return { base: name.slice(0, idx), ext: name.slice(idx) }
 }
 
 async function submitName() {
@@ -283,7 +294,15 @@ async function submitName() {
       await fileApi.createFolder(workspaceId(), parentId.value, name)
       ElMessage.success('文件夹已创建')
     } else {
-      await fileApi.rename(nameFile.value!.id, name)
+      const f = nameFile.value!
+      // 后缀保护：文件自动拼接原后缀（用户已输入相同后缀则不重复）
+      const finalName =
+        f.isDir || !f.suffix
+          ? name
+          : name.toLowerCase().endsWith('.' + f.suffix.toLowerCase())
+            ? name
+            : `${name}.${f.suffix}`
+      await fileApi.rename(f.id, finalName)
       ElMessage.success('已重命名')
     }
     nameDialogVisible.value = false

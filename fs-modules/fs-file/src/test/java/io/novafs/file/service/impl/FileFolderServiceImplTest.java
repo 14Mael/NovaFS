@@ -16,6 +16,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.isNull;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -92,7 +94,7 @@ class FileFolderServiceImplTest {
                 .isInstanceOf(BaseException.class)
                 .extracting(e -> ((BaseException) e).getCode())
                 .isEqualTo(ErrorCode.BAD_REQUEST.getCode());
-        verify(fileInfoMapper, never()).update(any());
+        verify(fileInfoMapper, never()).updateParentId(any(), any());
     }
 
     @Test
@@ -106,7 +108,7 @@ class FileFolderServiceImplTest {
                 .isInstanceOf(BaseException.class)
                 .extracting(e -> ((BaseException) e).getCode())
                 .isEqualTo(ErrorCode.BAD_REQUEST.getCode());
-        verify(fileInfoMapper, never()).update(any());
+        verify(fileInfoMapper, never()).updateParentId(any(), any());
     }
 
     @Test
@@ -118,7 +120,7 @@ class FileFolderServiceImplTest {
         service.move(1L, 100L, null);
 
         assertThat(file.getParentId()).isNull();
-        verify(fileInfoMapper).update(file);
+        verify(fileInfoMapper).updateParentId(eq(100L), isNull());
     }
 
     @Test
@@ -135,7 +137,7 @@ class FileFolderServiceImplTest {
                 .isInstanceOf(BaseException.class)
                 .extracting(e -> ((BaseException) e).getCode())
                 .isEqualTo(ErrorCode.BAD_REQUEST.getCode());
-        verify(fileInfoMapper, never()).update(any());
+        verify(fileInfoMapper, never()).updateParentId(any(), any());
     }
 
     @Test
@@ -148,7 +150,7 @@ class FileFolderServiceImplTest {
                 .isInstanceOf(BaseException.class)
                 .extracting(e -> ((BaseException) e).getCode())
                 .isEqualTo(ErrorCode.FILE_NOT_FOUND.getCode());
-        verify(fileInfoMapper, never()).update(any());
+        verify(fileInfoMapper, never()).updateParentId(any(), any());
     }
 
     @Test

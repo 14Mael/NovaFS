@@ -64,8 +64,9 @@ public class FileFolderServiceImpl implements FileFolderService {
         }
         ensureNameUnique(file.getWorkspaceId(), targetParentId, file.getOriginalName(), fileId);
 
+        // 显式更新 parent_id：entity update 会忽略 null 字段，导致"移回根目录"无效
+        fileInfoMapper.updateParentId(fileId, targetParentId);
         file.setParentId(targetParentId);
-        fileInfoMapper.update(file);
         return toVO(file);
     }
 
