@@ -59,7 +59,19 @@
           </tr>
         </thead>
         <tbody>
-          <tr v-for="f in files" :key="f.id" :class="{ dir: f.isDir }">
+          <tr
+            v-for="f in files"
+            :key="f.id"
+            :class="{
+              dir: f.isDir,
+              'drop-target': dragFile && dragFile.id !== f.id && f.isDir
+            }"
+            draggable="true"
+            @dragstart="onDragStart($event, f)"
+            @dragend="onDragEnd"
+            @dragover="onDragOver($event, f)"
+            @drop="onDrop($event, f)"
+          >
             <td>
               <span class="fname" :title="f.originalName" @dblclick.prevent="openFolder(f)">
                 <span class="ficon">{{ iconOf(f) }}</span>
@@ -186,6 +198,8 @@ const moveTargetName = ref('')
 
 const searchKeyword = ref('')
 const searching = ref(false)
+
+const dragFile = ref<FileInfo | null>(null)
 
 onMounted(() => load(1))
 
@@ -319,6 +333,51 @@ function openMove(f: FileInfo) {
   moveVisible.value = true
 }
 
+/** 拖拽开始：记录被拖拽的文件/文件夹 */
+function onDragStart(e: DragEvent, f: FileInfo) {
+  dragFile.value = f
+  e.dataTransfer?.setData('text/plain', f.id)
+  if (e.dataTransfer) e.dataTransfer.effectAllowed = 'move'
+}
+
+function onDragEnd() {
+  dragFile.value = null
+}
+
+/** 拖到文件夹行上方时允许放置 */
+function onDragOver(e: DragEvent, f: FileInfo) {
+  if (!dragFile.value || !f.isDir || dragFile.value.id === f.id) return
+  e.preventDefault()
+  if (e.dataTransfer) e.dataTransfer.dropEffect = 'move'
+}
+
+/** 松手：移动到目标文件夹 */
+function onDrop(e: DragEvent, f: FileInfo) {
+  e.preventDefault()
+  const file = dragFile.value
+  dragFile.value = null
+  if (!file || !f.isDir || file.id === f.id) return
+  moveTo(file, f.id)
+}
+
+/** 执行移动并刷新 */
+function moveTo(file: FileInfo, targetParentId: string | null) {
+  fileApi
+    .move(file.id, targetParentId)
+    .then(() => {
+      ElMessage.success(`已移动到「${targetFolderName(targetParentId)}」`)
+      return load()
+    })
+    .catch(() => {
+      /* 拦截器已提示 */
+    })
+}
+
+function targetFolderName(parentId: string | null): string {
+  if (!parentId) return '根目录'
+  return files.value.find((x) => x.id === parentId)?.originalName ?? '目标文件夹'
+}
+
 function moveToRoot() {
   moveTarget.value = null
   moveTargetName.value = ''
@@ -346,14 +405,8 @@ function onMoveNodeClick(data: { id: string; name: string }) {
 
 async function doMove() {
   if (!moveFile.value) return
-  try {
-    await fileApi.move(moveFile.value.id, moveTarget.value)
-    ElMessage.success('已移动')
-    moveVisible.value = false
-    await load()
-  } catch {
-    /* 拦截器已提示 */
-  }
+  moveVisible.value = false
+  moveTo(moveFile.value, moveTarget.value)
 }
 
 async function download(f: FileInfo) {
@@ -438,8 +491,11 @@ function formatTime(t: string): string {
 }
 .file-table td { padding: 12px 16px; border-bottom: 1px solid #eef4fc; color: var(--novafs-text); }
 .file-table tr:hover td { background: #f7fbff; }
-.fname { font-weight: 500; cursor: default; }
-tr.dir .fname { cursor: pointer; user-select: none; -webkit-user-select: none; }
+.fname { font-weight: 500; cursor: default; user-select: none; -webkit-user-select: none; }
+tr.dir .fname { cursor: pointer; }
+tr[draggable="true"] { cursor: grab; }
+tr.drop-target td { background: var(--novafs-primary-light) !important; }
+tr.drop-target .fname { outline: 1px dashed var(--novafs-primary); outline-offset: 2px; border-radius: 4px; }
 tr.dir .fname:hover { color: var(--novafs-primary); }
 .ficon { margin-right: 6px; }
 .muted { color: var(--novafs-text-sub); }
