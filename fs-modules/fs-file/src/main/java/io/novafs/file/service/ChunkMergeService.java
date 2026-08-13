@@ -35,22 +35,30 @@ public class ChunkMergeService {
     private final StorageConfigResolver configResolver;
     private final StorageServiceFacade storageFacade;
     private final ApplicationEventPublisher eventPublisher;
+    private final TaskFailureMarker failureMarker;
 
     @Transactional(rollbackFor = Exception.class)
     public FileInfoVO merge(Long userId, Long workspaceId, ChunkMergeRequest request) {
         FileTransferTask task = chunkInitService.requireTaskByUploadId(request.getUploadId());
-        if (task.isCompleted()) {
-            throw new BaseException(ErrorCode.CONFLICT, "任务已合并完成");
+        try {
+            if (task.isCompleted()) {
+                throw new BaseException(ErrorCode.CONFLICT, "任务已合并完成");
+            }
+            ensureAllChunksUploaded(task);
+
+            String objectKey = mergePluginChunks(task, request);
+            FileInfo file = finalizeFileInfo(task, objectKey, request.getMd5());
+            task.markCompleted();
+            taskMapper.update(task);
+
+            eventPublisher.publishEvent(new FileUploadCompleteEvent(file.getId(), userId, workspaceId, file.getSize()));
+            return toVO(file);
+        } catch (Exception e) {
+            // 合并失败（如存储端分片目录丢失）：主事务回滚会残留 UPLOADING 僵尸任务，
+            // 用独立事务标记 FAILED，避免断点续传反复复用同一 uploadId
+            failureMarker.markFailed(request.getUploadId());
+            throw e;
         }
-        ensureAllChunksUploaded(task);
-
-        String objectKey = mergePluginChunks(task, request);
-        FileInfo file = finalizeFileInfo(task, objectKey, request.getMd5());
-        task.markCompleted();
-        taskMapper.update(task);
-
-        eventPublisher.publishEvent(new FileUploadCompleteEvent(file.getId(), userId, workspaceId, file.getSize()));
-        return toVO(file);
     }
 
     private void ensureAllChunksUploaded(FileTransferTask task) {

@@ -73,6 +73,7 @@ public class ChunkInitService {
                         .and(FileTransferTask::getFileName).eq(request.getFileName())
                         .and(FileTransferTask::getFileMd5).eq(request.getMd5())
                         .and(FileTransferTask::getStatus).eq(TransferTaskStatus.UPLOADING)
+                        .and(FileTransferTask::getUploadedChunks).gt(0)
                         .orderBy(FileTransferTask::getId, false));
     }
 
