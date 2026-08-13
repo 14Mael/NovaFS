@@ -160,9 +160,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { fileApi, fetchBlob, downloadUrl, type FileInfo } from '../api/file'
+import { useUploadStore } from '../stores/upload'
 import UploadPanel from '../components/UploadPanel.vue'
 import PreviewDialog from '../components/PreviewDialog.vue'
 import ShareDialog from '../components/ShareDialog.vue'
@@ -180,6 +181,10 @@ const currentDirName = computed(() => {
   const last = crumbs.value[crumbs.value.length - 1]
   return last && last.id !== null ? last.name : '根目录'
 })
+
+// 上传完成（成功/失败）后自动刷新当前列表
+const uploadStore = useUploadStore()
+watch(() => uploadStore.completedCount, () => load())
 
 const previewFile = ref<FileInfo | null>(null)
 const previewVisible = ref(false)
