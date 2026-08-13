@@ -26,13 +26,13 @@
   --novafs-gradient: linear-gradient(135deg, #87CEFA, #4682B4);
   --novafs-bg: #F0F8FF;
   --novafs-card-bg: #FFFFFF;
-  --novafs-card-border: #B0E0E6;
-  --novafs-text: #4682B4;
-  --novafs-text-sub: #87CEFA;
-  --novafs-text-muted: #B0E0E6;
+  --novafs-card-border: #E2E8F0;
+  --novafs-text: #2B3A4A;
+  --novafs-text-sub: #5A6B7D;
+  --novafs-text-muted: #94A3B8;
   --novafs-hover: #F0F8FF;
   --novafs-table-head: #F0F8FF;
-  --novafs-divider: #E0FFFF;
+  --novafs-divider: #EEF4FA;
   --novafs-sidebar: #4682B4;
   --novafs-sidebar-active: rgba(70, 130, 180, 0.25);
   --novafs-sidebar-text: #E0FFFF;
