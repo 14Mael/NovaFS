@@ -25,6 +25,10 @@
 
 * { box-sizing: border-box; }
 
+/* 全站禁止文本选中（提示项/按钮/列表不影响操作），表单输入框除外 */
+* { user-select: none; -webkit-user-select: none; }
+input, textarea, [contenteditable='true'] { user-select: text; -webkit-user-select: text; }
+
 html, body, #app {
   height: 100%;
   margin: 0;
