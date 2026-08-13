@@ -103,9 +103,14 @@ public class FileFolderServiceImpl implements FileFolderService {
     private void ensureNameUnique(Long workspaceId, Long parentId, String name, Long excludeId) {
         QueryWrapper qw = QueryWrapper.create()
                 .where(FileInfo::getWorkspaceId).eq(workspaceId)
-                .and(FileInfo::getParentId).eq(parentId)
                 .and(FileInfo::getIsDeleted).eq(false)
                 .and(FileInfo::getOriginalName).eq(name);
+        // eq(null) 会被忽略，根目录必须显式 IS NULL，否则误判其他目录同名
+        if (parentId == null) {
+            qw.and(FileInfo::getParentId).isNull();
+        } else {
+            qw.and(FileInfo::getParentId).eq(parentId);
+        }
         if (excludeId != null) {
             qw.and(FileInfo::getId).ne(excludeId);
         }

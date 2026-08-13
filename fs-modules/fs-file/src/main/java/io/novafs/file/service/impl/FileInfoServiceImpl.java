@@ -67,11 +67,16 @@ public class FileInfoServiceImpl implements FileInfoService {
 
     @Override
     public PageResult<FileInfoVO> list(Long workspaceId, Long parentId, PageQuery pageQuery) {
+        // 注意：eq(null) 会被 MyBatis-Flex 默认忽略，根目录必须显式 IS NULL，否则返回全空间文件
         QueryWrapper qw = QueryWrapper.create()
                 .where(FileInfo::getWorkspaceId).eq(workspaceId)
-                .and(FileInfo::getParentId).eq(parentId)
-                .and(FileInfo::getIsDeleted).eq(false)
-                .orderBy(FileInfo::getIsDir, false)
+                .and(FileInfo::getIsDeleted).eq(false);
+        if (parentId == null) {
+            qw.and(FileInfo::getParentId).isNull();
+        } else {
+            qw.and(FileInfo::getParentId).eq(parentId);
+        }
+        qw.orderBy(FileInfo::getIsDir, false)
                 .orderBy(FileInfo::getCreatedAt, false);
         Page<FileInfo> page = fileInfoMapper.paginate(pageQuery.getPage(), pageQuery.getPageSize(), qw);
         return PageResult.of(pageQuery.getPage(), pageQuery.getPageSize(), page.getTotalRow(),

@@ -70,6 +70,21 @@ class FileInfoServiceImplTest {
     }
 
     @Test
+    void shouldListRootWithIsNullCondition() {
+        // 回归：根目录查询必须带 parent_id IS NULL，否则返回全空间文件
+        com.mybatisflex.core.paginate.Page<FileInfo> page = new com.mybatisflex.core.paginate.Page<>();
+        page.setRecords(List.of());
+        page.setTotalRow(0);
+        when(fileInfoMapper.paginate(anyInt(), anyInt(), any(QueryWrapper.class))).thenReturn(page);
+
+        service.list(10L, null, new PageQuery());
+
+        ArgumentCaptor<QueryWrapper> captor = ArgumentCaptor.forClass(QueryWrapper.class);
+        verify(fileInfoMapper).paginate(anyInt(), anyInt(), captor.capture());
+        assertThat(captor.getValue().toSQL()).contains("IS NULL");
+    }
+
+    @Test
     void shouldRecordRealFileSizeAndMd5OnUpload() throws IOException {
         when(configResolver.resolve(any())).thenReturn(
                 new StorageConfigResolver.StorageTarget("local", new StorageConfig()));
