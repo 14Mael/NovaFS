@@ -182,22 +182,22 @@ function formatTime(t: string): string {
 .uploader { margin-bottom: 22px; }
 .upload-inner { padding: 26px 0; }
 .upload-icon { font-size: 30px; color: var(--novafs-primary); }
-.upload-text { font-size: 14px; color: #4a6a96; margin-top: 6px; }
+.upload-text { font-size: 14px; color: var(--novafs-text-sub); margin-top: 6px; }
 .upload-text em { color: var(--novafs-primary); font-style: normal; font-weight: 600; }
 .upload-hint { font-size: 12px; color: var(--novafs-text-muted); margin-top: 4px; }
 
 .ai-result {
-  background: #fff; border: 1px solid var(--novafs-card-border);
+  background: var(--novafs-card-bg); border: 1px solid var(--novafs-card-border);
   border-radius: 12px; box-shadow: 0 2px 10px rgba(59, 157, 255, 0.06);
   padding: 16px 20px; margin-bottom: 8px;
 }
 .ai-result-head { display: flex; justify-content: space-between; align-items: center; font-size: 14px; font-weight: 700; color: var(--novafs-text); margin-bottom: 12px; }
 .ai-empty { color: var(--novafs-text-muted); font-size: 13px; padding: 20px 0; text-align: center; }
-.hit-card { border: 1px solid var(--novafs-card-border); border-radius: 10px; padding: 10px 14px; margin-bottom: 10px; background: #f7fbff; }
+.hit-card { border: 1px solid var(--novafs-card-border); border-radius: 10px; padding: 10px 14px; margin-bottom: 10px; background: var(--novafs-hover); }
 .hit-head { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 4px; }
 .hit-name { color: var(--novafs-primary); font-weight: 600; }
 .hit-score { color: #e59a2b; font-weight: 700; }
-.hit-content { font-size: 12px; color: #5a7aa6; line-height: 1.6; }
+.hit-content { font-size: 12px; color: var(--novafs-text-sub); line-height: 1.6; }
 
 .grid {
   display: grid;
@@ -206,7 +206,7 @@ function formatTime(t: string): string {
   min-height: 120px;
 }
 .card {
-  background: #fff; border: 1px solid var(--novafs-card-border);
+  background: var(--novafs-card-bg); border: 1px solid var(--novafs-card-border);
   border-radius: 12px; padding: 14px;
   box-shadow: 0 2px 10px rgba(59, 157, 255, 0.06);
   transition: transform 0.15s, box-shadow 0.15s;

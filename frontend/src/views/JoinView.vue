@@ -74,7 +74,7 @@ function goFiles() {
 }
 .card {
   width: 420px; padding: 36px 34px 30px; text-align: center;
-  background: #fff; border-radius: 16px;
+  background: var(--novafs-card-bg); border-radius: 16px;
   box-shadow: 0 24px 60px rgba(23, 66, 130, 0.18);
 }
 .logo {

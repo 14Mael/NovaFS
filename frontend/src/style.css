@@ -1,26 +1,42 @@
-/* NovaFS 全局主题 —— 浅蓝色调 */
+/* NovaFS 全局主题 —— 限定色板（仅 5 色）
+ * #F0F8FF AliceBlue / #E0FFFF LightCyan / #B0E0E6 PowderBlue
+ * #87CEFA LightSkyBlue / #4682B4 SteelBlue
+ */
 :root {
-  /* Element Plus 主色（浅蓝） */
-  --el-color-primary: #3b9dff;
-  --el-color-primary-light-3: #6bb4ff;
-  --el-color-primary-light-5: #93c8ff;
-  --el-color-primary-light-7: #bcdcff;
-  --el-color-primary-light-8: #d1e6ff;
-  --el-color-primary-light-9: #e6f1ff;
-  --el-color-primary-dark-2: #2f7edb;
+  /* 色板语义 */
+  --c-bg: #F0F8FF;
+  --c-card: #E0FFFF;
+  --c-border: #B0E0E6;
+  --c-accent: #87CEFA;
+  --c-primary: #4682B4;
+
+  /* Element Plus 主色系列（映射到色板） */
+  --el-color-primary: #4682B4;
+  --el-color-primary-light-3: #87CEFA;
+  --el-color-primary-light-5: #B0E0E6;
+  --el-color-primary-light-7: #E0FFFF;
+  --el-color-primary-light-8: #E0FFFF;
+  --el-color-primary-light-9: #F0F8FF;
+  --el-color-primary-dark-2: #4682B4;
 
   /* NovaFS 语义色 */
-  --novafs-primary: #3b9dff;
-  --novafs-primary-dark: #2f7edb;
-  --novafs-primary-light: #e6f1ff;
-  --novafs-gradient: linear-gradient(135deg, #56b0ff, #3b82f6);
-  --novafs-bg: #f1f7ff;
-  --novafs-text: #1e3a5f;
-  --novafs-text-sub: #7d95b8;
-  --novafs-text-muted: #a4b8d4;
-  --novafs-card-border: #dbe9fa;
-  --novafs-sidebar: #0e2b52;
-  --novafs-sidebar-active: rgba(59, 157, 255, 0.22);
+  --novafs-primary: #4682B4;
+  --novafs-primary-dark: #4682B4;
+  --novafs-primary-light: #87CEFA;
+  --novafs-gradient: linear-gradient(135deg, #87CEFA, #4682B4);
+  --novafs-bg: #F0F8FF;
+  --novafs-card-bg: #E0FFFF;
+  --novafs-card-border: #B0E0E6;
+  --novafs-text: #4682B4;
+  --novafs-text-sub: #87CEFA;
+  --novafs-text-muted: #B0E0E6;
+  --novafs-hover: #F0F8FF;
+  --novafs-table-head: #F0F8FF;
+  --novafs-divider: #E0FFFF;
+  --novafs-sidebar: #4682B4;
+  --novafs-sidebar-active: rgba(70, 130, 180, 0.25);
+  --novafs-sidebar-text: #E0FFFF;
+  --novafs-sidebar-text-sub: #B0E0E6;
 }
 
 * { box-sizing: border-box; }

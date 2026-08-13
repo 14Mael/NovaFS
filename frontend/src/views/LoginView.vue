@@ -80,7 +80,7 @@ async function submit() {
 }
 .card {
   width: 380px; padding: 36px 34px 24px;
-  background: #fff; border-radius: 16px;
+  background: var(--novafs-card-bg); border-radius: 16px;
   box-shadow: 0 24px 60px rgba(23, 66, 130, 0.16);
 }
 .brand { text-align: center; margin-bottom: 22px; }

@@ -516,7 +516,7 @@ function formatTime(t: string): string {
 .search-crumb { display: flex; align-items: center; gap: 10px; font-size: 13px; color: var(--novafs-text); }
 
 .list-wrap {
-  background: #fff;
+  background: var(--novafs-card-bg);
   border: 1px solid var(--novafs-card-border);
   border-radius: 12px;
   box-shadow: 0 2px 10px rgba(59, 157, 255, 0.06);
@@ -524,12 +524,12 @@ function formatTime(t: string): string {
 }
 .file-table { width: 100%; border-collapse: collapse; font-size: 13px; }
 .file-table th {
-  text-align: left; padding: 12px 16px; background: #f4f9ff;
+  text-align: left; padding: 12px 16px; background: var(--novafs-table-head);
   color: var(--novafs-text-sub); font-weight: 600; font-size: 12px;
   border-bottom: 1px solid var(--novafs-card-border);
 }
-.file-table td { padding: 12px 16px; border-bottom: 1px solid #eef4fc; color: var(--novafs-text); }
-.file-table tr:hover td { background: #f7fbff; }
+.file-table td { padding: 12px 16px; border-bottom: 1px solid var(--novafs-divider); color: var(--novafs-text); }
+.file-table tr:hover td { background: var(--novafs-hover); }
 .fname { font-weight: 500; cursor: default; user-select: none; -webkit-user-select: none; }
 tr.dir .fname { cursor: pointer; }
 tr[draggable="true"] { cursor: grab; }

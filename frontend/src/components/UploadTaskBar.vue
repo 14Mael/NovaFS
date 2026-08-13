@@ -103,7 +103,7 @@ onMounted(() => {
 .panel {
   width: 340px;
   max-height: 420px;
-  background: #fff;
+  background: var(--novafs-card-bg);
   border: 1px solid var(--novafs-card-border);
   border-radius: 12px;
   box-shadow: 0 18px 50px rgba(23, 66, 130, 0.2);
@@ -114,7 +114,7 @@ onMounted(() => {
   justify-content: space-between;
   align-items: center;
   padding: 12px 14px;
-  background: #f4f9ff;
+  background: var(--novafs-table-head);
   font-weight: 700;
   color: var(--novafs-text);
   border-bottom: 1px solid var(--novafs-card-border);
@@ -129,7 +129,7 @@ onMounted(() => {
   gap: 12px;
 }
 .empty { text-align: center; color: var(--novafs-text-muted); padding: 16px 0; }
-.task { border-bottom: 1px solid #f0f6fd; padding-bottom: 10px; }
+.task { border-bottom: 1px solid var(--novafs-divider); padding-bottom: 10px; }
 .task:last-child { border-bottom: none; }
 .task-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; }
 .task-name {

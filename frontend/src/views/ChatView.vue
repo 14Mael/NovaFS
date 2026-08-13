@@ -111,7 +111,7 @@ function scrollToBottom() {
 
 /* 白色工作台面板:与文档库卡片同一视觉语言 */
 .chat-panel {
-  background: #fff;
+  background: var(--novafs-card-bg);
   border-radius: 16px;
   border: 1px solid var(--novafs-card-border);
   box-shadow: 0 2px 12px rgba(59, 157, 255, 0.06);
@@ -147,7 +147,7 @@ function scrollToBottom() {
 .sources { margin-top: 14px; }
 .sources-title { font-size: 12px; font-weight: 600; color: var(--novafs-text-sub); margin-bottom: 8px; }
 .source-card {
-  background: #f4f9ff;
+  background: var(--novafs-table-head);
   border: 1px solid var(--novafs-card-border);
   border-radius: 10px;
   padding: 10px 14px;
@@ -156,7 +156,7 @@ function scrollToBottom() {
 .source-head { display: flex; justify-content: space-between; font-size: 12px; }
 .doc-name { color: var(--novafs-primary); font-weight: 600; }
 .score { color: #e59a2b; font-weight: 700; }
-.source-content { font-size: 12px; color: #5a7aa6; margin-top: 4px; line-height: 1.6; }
+.source-content { font-size: 12px; color: var(--novafs-text-sub); margin-top: 4px; line-height: 1.6; }
 
 .chat-input { padding: 14px 28px 20px; }
 </style>

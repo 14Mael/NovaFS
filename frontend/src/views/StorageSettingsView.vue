@@ -215,7 +215,7 @@ async function remove(s: StorageSetting) {
 .storage-header .sub { font-size: 13px; color: var(--novafs-text-sub); }
 
 .list-wrap {
-  background: #fff;
+  background: var(--novafs-card-bg);
   border: 1px solid var(--novafs-card-border);
   border-radius: 12px;
   box-shadow: 0 2px 10px rgba(59, 157, 255, 0.06);
@@ -223,12 +223,12 @@ async function remove(s: StorageSetting) {
 }
 .config-table { width: 100%; border-collapse: collapse; font-size: 13px; }
 .config-table th {
-  text-align: left; padding: 12px 16px; background: #f4f9ff;
+  text-align: left; padding: 12px 16px; background: var(--novafs-table-head);
   color: var(--novafs-text-sub); font-weight: 600; font-size: 12px;
   border-bottom: 1px solid var(--novafs-card-border);
 }
-.config-table td { padding: 12px 16px; border-bottom: 1px solid #eef4fc; color: var(--novafs-text); }
-.config-table tr:hover td { background: #f7fbff; }
+.config-table td { padding: 12px 16px; border-bottom: 1px solid var(--novafs-divider); color: var(--novafs-text); }
+.config-table tr:hover td { background: var(--novafs-hover); }
 .platform-name { font-weight: 600; }
 .mono { font-family: Consolas, monospace; color: var(--novafs-text-sub); }
 .muted { color: var(--novafs-text-sub); }

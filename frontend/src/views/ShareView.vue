@@ -149,7 +149,7 @@ function formatSize(bytes: number): string {
 }
 .card {
   width: 460px; padding: 30px 32px 26px;
-  background: #fff; border-radius: 16px;
+  background: var(--novafs-card-bg); border-radius: 16px;
   box-shadow: 0 24px 60px rgba(23, 66, 130, 0.18);
 }
 .brand { display: flex; align-items: center; gap: 12px; margin-bottom: 22px; }

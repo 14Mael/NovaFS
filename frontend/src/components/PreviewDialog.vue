@@ -79,7 +79,7 @@ function cleanup() {
 .preview-pdf { width: 100%; height: 62vh; border: none; border-radius: 8px; }
 .preview-text {
   width: 100%; max-height: 62vh; overflow: auto; margin: 0;
-  background: #f7faff; border: 1px solid var(--novafs-card-border);
+  background: var(--novafs-table-head); border: 1px solid var(--novafs-card-border);
   border-radius: 8px; padding: 14px 16px;
   font-size: 13px; line-height: 1.7; color: var(--novafs-text);
   white-space: pre-wrap; word-break: break-all;

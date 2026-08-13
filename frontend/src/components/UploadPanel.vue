@@ -40,7 +40,7 @@ function onUpload(options: UploadRequestOptions) {
 .upload-panel { margin-bottom: 4px; }
 .upload-inner { padding: 20px 0; }
 .upload-icon { font-size: 28px; color: var(--novafs-primary); }
-.upload-text { font-size: 14px; color: #4a6a96; margin-top: 6px; }
+.upload-text { font-size: 14px; color: var(--novafs-text-sub); margin-top: 6px; }
 .upload-text em { color: var(--novafs-primary); font-style: normal; font-weight: 600; }
 .upload-hint { font-size: 12px; color: var(--novafs-text-muted); margin-top: 4px; }
 .upload-target { font-size: 12px; color: var(--novafs-primary); margin-top: 4px; }

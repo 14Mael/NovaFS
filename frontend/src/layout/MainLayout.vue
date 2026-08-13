@@ -187,7 +187,7 @@ async function logout() {
 .sidebar {
   width: 220px;
   background: var(--novafs-sidebar);
-  color: #c9d8ee;
+  color: var(--novafs-sidebar-text);
   display: flex;
   flex-direction: column;
   flex-shrink: 0;
@@ -202,13 +202,13 @@ async function logout() {
 }
 .brand-text { display: flex; flex-direction: column; }
 .brand-text .name { color: #fff; font-weight: 700; font-size: 17px; }
-.brand-text .sub { font-size: 11px; color: #6f87ac; }
+.brand-text .sub { font-size: 11px; color: var(--novafs-sidebar-text-sub); }
 
 .nav { flex: 1; padding: 0 12px; display: flex; flex-direction: column; gap: 4px; }
 .nav-item {
   display: flex; align-items: center; gap: 10px;
   padding: 10px 12px; border-radius: 8px;
-  color: #c9d8ee; text-decoration: none; font-size: 14px;
+  color: var(--novafs-sidebar-text); text-decoration: none; font-size: 14px;
   transition: background 0.15s;
 }
 .nav-item .icon { width: 20px; text-align: center; }
@@ -219,17 +219,17 @@ async function logout() {
 .ws { display: flex; align-items: center; gap: 4px; margin-bottom: 10px; }
 .ws-select { flex: 1; }
 .ws-select :deep(.el-select__wrapper) { background: rgba(255, 255, 255, 0.06); box-shadow: none; }
-.ws-select :deep(.el-select__placeholder), .ws-select :deep(.el-select__selected-item) { color: #a5c4f5; }
-.ws-manual { color: #a5c4f5; font-size: 12px; padding: 0 8px; }
-.ws-add { color: #6f87ac; font-size: 16px; padding: 0 6px; }
+.ws-select :deep(.el-select__placeholder), .ws-select :deep(.el-select__selected-item) { color: var(--novafs-sidebar-text-sub); }
+.ws-manual { color: var(--novafs-sidebar-text-sub); font-size: 12px; padding: 0 8px; }
+.ws-add { color: var(--novafs-sidebar-text-sub); font-size: 16px; padding: 0 6px; }
 .ws-add:hover { color: #fff; }
 .slug-tip { font-size: 12px; color: #e59a2b; margin-top: 4px; }
 
 .user { display: flex; align-items: center; gap: 10px; padding: 4px 6px; }
-.avatar { background: #2f7edb; }
+.avatar { background: var(--novafs-primary-dark); }
 .user-meta { flex: 1; }
-.uname { font-size: 13px; color: #e5ecf8; }
-.more { cursor: pointer; color: #6f87ac; font-size: 18px; letter-spacing: 2px; }
+.uname { font-size: 13px; color: var(--novafs-sidebar-text); }
+.more { cursor: pointer; color: var(--novafs-sidebar-text-sub); font-size: 18px; letter-spacing: 2px; }
 
 .content { flex: 1; min-width: 0; overflow-y: auto; }
 </style>
