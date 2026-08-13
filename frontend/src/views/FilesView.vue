@@ -160,7 +160,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, ref, watch } from 'vue'
+import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { fileApi, fetchBlob, downloadUrl, type FileInfo } from '../api/file'
 import { useUploadStore } from '../stores/upload'
@@ -206,7 +206,33 @@ const searching = ref(false)
 
 const dragFile = ref<FileInfo | null>(null)
 
-onMounted(() => load(1))
+onMounted(() => {
+  window.addEventListener('keydown', onKeydown)
+  load(1)
+})
+onBeforeUnmount(() => {
+  window.removeEventListener('keydown', onKeydown)
+})
+
+/** Backspace 返回上级文件夹（输入框内不拦截） */
+function onKeydown(e: KeyboardEvent) {
+  const target = e.target as HTMLElement
+  if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA' || target.isContentEditable) return
+  if (e.key === 'Backspace') {
+    e.preventDefault()
+    goUp()
+  }
+}
+
+function goUp() {
+  if (searching.value) {
+    clearSearch()
+    return
+  }
+  if (crumbs.value.length > 1) {
+    goCrumb(crumbs.value.length - 2)
+  }
+}
 
 async function load(p = page.value) {
   page.value = p
