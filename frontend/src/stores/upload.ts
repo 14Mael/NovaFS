@@ -202,9 +202,9 @@ export const useUploadStore = defineStore('upload', {
       task.percent = 100
     },
 
-    /** 清除已完成/失败的任务 */
+    /** 只清除已终止的任务（完成/失败），进行中任务（含计算 MD5/上传/合并）一律保留 */
     clearFinished() {
-      this.tasks = this.tasks.filter((t) => t.status === 'uploading' || t.status === 'hashing' || t.status === 'merging')
+      this.tasks = this.tasks.filter((t) => t.status !== 'done' && t.status !== 'error')
     }
   }
 })
