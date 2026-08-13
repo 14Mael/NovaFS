@@ -23,7 +23,7 @@
           <span class="icon">🗑</span> 回收站
         </router-link>
         <router-link to="/members" class="nav-item">
-          <span class="icon">👥</span> 成员管理
+          <span class="icon">☰</span> 成员管理
         </router-link>
         <router-link to="/storage" class="nav-item">
           <span class="icon">◈</span> 存储设置
