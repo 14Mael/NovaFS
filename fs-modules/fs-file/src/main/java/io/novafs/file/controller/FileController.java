@@ -9,6 +9,7 @@ import io.novafs.file.dto.ChunkMergeRequest;
 import io.novafs.file.dto.ChunkUploadResponse;
 import io.novafs.file.dto.FileInfoVO;
 import io.novafs.file.dto.FolderNameRequest;
+import io.novafs.file.dto.InstantUploadRequest;
 import io.novafs.file.dto.UploadedChunksResponse;
 import io.novafs.file.service.ChunkUploadOrchestrator;
 import io.novafs.file.service.FileFolderService;
@@ -97,6 +98,15 @@ public class FileController {
                                      @RequestParam("file") MultipartFile file) throws IOException {
         return Result.ok(fileInfoService.upload(currentUserId(), workspaceId, parentId,
                 storagePlatformSettingId, file.getOriginalFilename(), file.getInputStream()));
+    }
+
+    /** 秒传落库（复用已存在文件的存储对象，归属到目标目录） */
+    @PostMapping("/instant")
+    public Result<FileInfoVO> instantUpload(@RequestParam Long workspaceId,
+                                            @RequestParam(required = false) Long parentId,
+                                            @Valid @RequestBody InstantUploadRequest request) {
+        return Result.ok(fileInfoService.instantUpload(currentUserId(), workspaceId, parentId,
+                request.getFileName(), request.getMd5(), request.getFileSize()));
     }
 
     /** 文件列表 */

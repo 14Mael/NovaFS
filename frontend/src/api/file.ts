@@ -91,6 +91,15 @@ export const fileApi = {
     return request.post<FileInfo>('/file/upload', form)
   },
 
+  /** 秒传落库（复用已存在文件的存储对象，归属到目标目录） */
+  instantUpload(
+    workspaceId: string,
+    parentId: string | null,
+    data: { fileName: string; md5: string; fileSize: number }
+  ) {
+    return request.post<FileInfo>('/file/instant', data, { params: { workspaceId, parentId: parentId ?? undefined } })
+  },
+
   /** 秒传校验 */
   checkMd5(workspaceId: string, data: { md5: string; fileName: string; fileSize: number }) {
     return request.post<CheckMd5Result>('/file/check-md5', data, { params: { workspaceId } })

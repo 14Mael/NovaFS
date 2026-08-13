@@ -18,6 +18,12 @@ public interface FileInfoService {
                       String fileName, InputStream in);
 
     /**
+     * 秒传落库：复用同工作空间已存在文件的存储对象，在当前目录创建记录
+     */
+    FileInfoVO instantUpload(Long userId, Long workspaceId, Long parentId,
+                             String fileName, String md5, Long fileSize);
+
+    /**
      * 查询目录下的文件列表
      */
     PageResult<FileInfoVO> list(Long workspaceId, Long parentId, PageQuery pageQuery);

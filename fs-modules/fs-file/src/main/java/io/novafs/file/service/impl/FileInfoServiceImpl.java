@@ -99,6 +99,54 @@ public class FileInfoServiceImpl implements FileInfoService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
+    public FileInfoVO instantUpload(Long userId, Long workspaceId, Long parentId,
+                                    String fileName, String md5, Long fileSize) {
+        FileInfo source = fileInfoMapper.selectOneByQuery(
+                QueryWrapper.create()
+                        .where(FileInfo::getWorkspaceId).eq(workspaceId)
+                        .and(FileInfo::getContentMd5).eq(md5)
+                        .and(FileInfo::getSize).eq(fileSize)
+                        .and(FileInfo::getIsDeleted).eq(false)
+                        .and(FileInfo::getObjectKey).isNotNull()
+                        .orderBy(FileInfo::getCreatedAt, false));
+        if (source == null) {
+            throw new BaseException(ErrorCode.BAD_REQUEST, "秒传源文件不存在，请重新上传");
+        }
+
+        // 目标目录同名检查（parentId 为 null 时显式 IS NULL）
+        QueryWrapper dupQw = QueryWrapper.create()
+                .where(FileInfo::getWorkspaceId).eq(workspaceId)
+                .and(FileInfo::getIsDeleted).eq(false)
+                .and(FileInfo::getOriginalName).eq(fileName);
+        if (parentId == null) {
+            dupQw.and(FileInfo::getParentId).isNull();
+        } else {
+            dupQw.and(FileInfo::getParentId).eq(parentId);
+        }
+        if (fileInfoMapper.selectCountByQuery(dupQw) > 0) {
+            throw new BaseException(ErrorCode.BAD_REQUEST, "同名文件已存在");
+        }
+
+        // 复用源文件的存储对象与存储配置，记录归属当前目录
+        FileInfo file = new FileInfo();
+        file.setWorkspaceId(workspaceId);
+        file.setUserId(userId);
+        file.setParentId(parentId);
+        file.setOriginalName(fileName);
+        file.setSuffix(suffixOf(fileName));
+        file.setSize(fileSize);
+        file.setObjectKey(source.getObjectKey());
+        file.setContentMd5(md5);
+        file.setStoragePlatformSettingId(source.getStoragePlatformSettingId());
+        file.setIsDir(false);
+        file.setIsDeleted(false);
+        fileInfoMapper.insert(file);
+        log.info("Instant upload: id={}, name={}, md5={}", file.getId(), fileName, md5);
+        return toVO(file);
+    }
+
+    @Override
     public InputStream download(Long fileId, Long userId) {
         FileInfo file = requireOwnedFile(fileId, userId);
         if (file.getObjectKey() == null) {

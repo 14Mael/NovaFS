@@ -85,6 +85,27 @@ class FileInfoServiceImplTest {
     }
 
     @Test
+    void shouldInstantUploadReuseSourceObjectKey() {
+        FileInfo source = new FileInfo();
+        source.setId(200L);
+        source.setWorkspaceId(10L);
+        source.setObjectKey("uuid/old.txt");
+        source.setStoragePlatformSettingId(50L);
+        when(fileInfoMapper.selectOneByQuery(any())).thenReturn(source);
+        when(fileInfoMapper.selectCountByQuery(any())).thenReturn(0L);
+
+        FileInfoVO vo = service.instantUpload(1L, 10L, null, "new.txt", "md5hash", 100L);
+
+        ArgumentCaptor<FileInfo> captor = ArgumentCaptor.forClass(FileInfo.class);
+        verify(fileInfoMapper).insert(captor.capture());
+        assertThat(captor.getValue().getObjectKey()).isEqualTo("uuid/old.txt");
+        assertThat(captor.getValue().getStoragePlatformSettingId()).isEqualTo(50L);
+        assertThat(captor.getValue().getParentId()).isNull();
+        assertThat(captor.getValue().getContentMd5()).isEqualTo("md5hash");
+        assertThat(vo.getOriginalName()).isEqualTo("new.txt");
+    }
+
+    @Test
     void shouldRecordRealFileSizeAndMd5OnUpload() throws IOException {
         when(configResolver.resolve(any())).thenReturn(
                 new StorageConfigResolver.StorageTarget("local", new StorageConfig()));

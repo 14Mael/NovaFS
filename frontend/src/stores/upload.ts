@@ -90,7 +90,13 @@ export const useUploadStore = defineStore('upload', {
             fileSize: file.size
           })
           if (check.exists) {
-            this.finish(task, '秒传（服务端已存在）')
+            // 秒传：复用已存在文件的存储对象，在目标目录创建记录（否则文件不会出现在当前文件夹）
+            await fileApi.instantUpload(workspaceId, parentId, {
+              fileName: file.name,
+              md5,
+              fileSize: file.size
+            })
+            this.finish(task, '秒传成功')
             return
           }
         }
