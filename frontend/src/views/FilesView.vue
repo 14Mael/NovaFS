@@ -207,15 +207,15 @@ const searching = ref(false)
 const dragFile = ref<FileInfo | null>(null)
 
 onMounted(() => {
-  window.addEventListener('auxclick', onAuxClick)
+  window.addEventListener('mousedown', onMouseDown)
   load(1)
 })
 onBeforeUnmount(() => {
-  window.removeEventListener('auxclick', onAuxClick)
+  window.removeEventListener('mousedown', onMouseDown)
 })
 
-/** 鼠标后退侧键：返回上级文件夹（阻止浏览器历史导航） */
-function onAuxClick(e: MouseEvent) {
+/** 鼠标后退侧键：阻止浏览器历史导航（mousedown 阶段可取消），并返回上级文件夹 */
+function onMouseDown(e: MouseEvent) {
   if (e.button === 3) {
     e.preventDefault()
     goUp()
