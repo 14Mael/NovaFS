@@ -164,6 +164,7 @@ import { computed, onBeforeUnmount, onMounted, ref, watch } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { fileApi, fetchBlob, downloadUrl, type FileInfo } from '../api/file'
 import { useUploadStore } from '../stores/upload'
+import { registerFilesUp, setBackBlock, consumeBackBlock } from '../utils/filesNav'
 import UploadPanel from '../components/UploadPanel.vue'
 import PreviewDialog from '../components/PreviewDialog.vue'
 import ShareDialog from '../components/ShareDialog.vue'
@@ -207,19 +208,28 @@ const searching = ref(false)
 const dragFile = ref<FileInfo | null>(null)
 
 onMounted(() => {
+  registerFilesUp(() => goUp())
   window.addEventListener('mousedown', onMouseDown)
   load(1)
 })
 onBeforeUnmount(() => {
+  registerFilesUp(null)
   window.removeEventListener('mousedown', onMouseDown)
 })
 
-/** 鼠标后退侧键：阻止浏览器历史导航（mousedown 阶段可取消），并返回上级文件夹 */
+/**
+ * 鼠标后退侧键：preventDefault 尽力阻止；路由守卫拦截兜底（返回上级而非跳历史）。
+ * 若无导航发生（preventDefault 生效），300ms 后手动返回上级。
+ */
 function onMouseDown(e: MouseEvent) {
-  if (e.button === 3) {
-    e.preventDefault()
-    goUp()
-  }
+  if (e.button !== 3) return
+  e.preventDefault()
+  setBackBlock()
+  setTimeout(() => {
+    if (consumeBackBlock()) {
+      goUp()
+    }
+  }, 300)
 }
 
 function goUp() {

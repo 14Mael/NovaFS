@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { peekBackBlock, clearBackBlock, getFilesUp } from '../utils/filesNav'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -23,6 +24,15 @@ const router = createRouter({
 })
 
 router.beforeEach((to) => {
+  // 鼠标侧键后退拦截：取消路由跳转，改为返回上级目录（仅侧键标记触发）
+  const up = getFilesUp()
+  if (peekBackBlock() && to.path !== '/files' && up) {
+    clearBackBlock()
+    up()
+    return false
+  }
+  clearBackBlock()
+
   const token = localStorage.getItem('novafs_token')
   if (!to.meta.public && !token) return '/login'
   if (to.path === '/login' && token) return '/chat'
